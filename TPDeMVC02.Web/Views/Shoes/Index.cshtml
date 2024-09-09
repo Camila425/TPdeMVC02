@@ -1,0 +1,135 @@
+﻿@model IPagedList<ShoeListVm>
+@using X.PagedList
+@using X.Web.PagedList
+@{
+    ViewData["Title"] = "Shoes List";
+}
+<div class="container">
+    @Html.AntiForgeryToken()
+    <div class="row mb-3">
+        <div class="col-6">
+            <h3>Shoes List</h3>
+
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Shoes" asp-action="UpSert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Nuevo
+            </a>
+        </div>
+    </div>
+    <form method="get" class="form-inline" asp-action="Index">
+        <div class="d-flex flex-row align-items-center">
+            <div class="col-auto mx-1">
+                <label for="pageSize">Show:</label>
+            </div>
+            <div class="col-auto mx-2">
+                <select class="form-select" id="pageSize" name="pageSize" onchange="this.form.submit()" style="width:70px">
+                    @{
+                        var options = new List<int> { 5, 10, 15, 20 };
+                        foreach (var option in options)
+                        {
+                            if (ViewBag.currentPageSize == option)
+                            {
+                                <option selected value="@option">@option</option>
+                            }
+                            else
+                            {
+                                <option value="@option">@option</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-auto mx-2" style="width: 200px;">
+                <input type="text" name="searchTerm" id="searchTerm" class="form-control" 
+
+                placeholder="Search by..." value="@ViewBag.currentSearchTerm" />
+            </div>
+            <div class="col-auto d-flex">
+                <button type="submit" class="btn btn-primary mx-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <button type="submit" class="btn btn-secondary" id="viewAll" name="viewAll" value="true">
+                    <i class="bi bi-list"></i> View All
+                </button>
+            </div>
+        </div>
+    </form>
+    <table class="table table-bordered table-hover mt-3">
+        <thead>
+            <tr>
+                <th style="width:35%">Description</th>
+                <th style="width:5%">BrandName</th>
+                <th style="width:5%">SportName</th>
+                <th style="width:5%">GenreName</th>
+                <th style="width:5%">ColorName</th>
+                <th style="width:20%">Model</th>
+                <th style="width:5%">Price</th>
+                <th style="width:20%">Actions</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr id="@item.ShoeId">
+                        <td>
+                            @item.Description
+
+                        </td>
+                        <td>
+                            @item.Brand
+                        </td>
+                        <td>
+                            @item.Sport
+                        </td>
+                        <td>
+                            @item.Genre
+                        </td>
+                        <td>
+                            @item.Color
+                        </td>
+                        <td>
+                            @item.Model
+                        </td>
+                        <td>
+                            @item.Price
+                        </td>
+                        <td>
+                            <a class="btn btn-warning" asp-controller="Shoes" asp-action="UpSert" asp-route-id="@item.ShoeId">
+                                <i class="bi bi-pencil-square"></i>&nbsp;
+                                Edit
+                            </a>
+                            <a onclick="Delete('/Shoes/Delete/@item.ShoeId',@item.ShoeId,'@item.Description')" class="btn btn-danger">
+                                <i class="bi bi-trash-fill"></i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">
+                        No Hay Shoes
+
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <partial name="Pager" model="@Model"/>
+
+</div>
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <script src="~/js/Common.js" ></script>
+
+    </script>
+}

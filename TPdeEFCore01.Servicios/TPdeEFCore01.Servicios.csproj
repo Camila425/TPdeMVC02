@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TPdeEFCore01.Datos\TPdeEFCore01.Datos.csproj" />
+    <ProjectReference Include="..\TPdeEFCore01.Entidades\TPdeEFCore01.Entidades.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,72 @@
+﻿@model IPagedList<SizeEditVm>
+@using X.PagedList
+@using X.Web.PagedList
+@{
+	ViewData["Title"] = "List Sizes";
+}
+
+<div class="row mb-3">
+	<div class="col-6">
+		<h3>Sizes List</h3>
+
+	</div>
+	<div class="col-6 text-end">
+		<a asp-controller="Sizes" asp-action="Upsert" class="btn btn-primary">
+			<i class="bi bi-plus-circle"></i>
+			Nuevo
+		</a>
+	</div>
+</div>
+
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			<th class="col-9">SizeNumber </th>
+			<th class="col-2">Acciones</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Model.Any())
+		{
+			foreach (var item in Model)
+			{
+				<tr id="@item.SizeId">
+
+					<td>
+						@item.SizeNumber
+					</td>
+
+					<td class="text-end">
+						<a onclick="Delete('/Sizes/Delete/@item.SizeId',@item.SizeId,'@item.SizeNumber')" class="btn btn-danger ">
+							<i class="bi bi-trash-fill"></i>
+							Delete
+						</a>
+						<a asp-controller="Sizes" asp-action="Upsert" asp-route-id="@item.SizeId" class="btn btn-warning ">
+							<i class="bi bi-pencil-square"></i>
+							Edit
+						</a>
+
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="2" class="text-center">
+					No Hay Sizes
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<partial name="Pager" model="@Model" />
+
+@section Scripts {
+	<script src="~/lib/jquery/dist/jquery.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+      <script src="~/js/Common.js" ></script>
+
+	</script>
+}
+
