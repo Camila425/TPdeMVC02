@@ -3,7 +3,13 @@
 @using X.Web.PagedList
 <div class="d-flex">
 @Html.PagedListPager(Model, page => Url.Action("Index", 
-new { page,searchterm=ViewBag.currentSearchTerm,pageSize=ViewBag.currentPageSize }), new PagedListRenderOptions
+new { page,
+	searchterm=ViewBag.currentSearchTerm,
+	pageSize=ViewBag.currentPageSize,
+    filterBrandId = ViewBag.currentFilterId,
+    filterColorId = ViewBag.currentFilterId,
+    orderBy=ViewBag.currentOrderBy
+	}), new PagedListRenderOptions
 {
 	UlElementClasses = new[] { "pagination" },
 	LiElementClasses = new[] { "page-item" },

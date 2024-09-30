@@ -11,6 +11,7 @@ namespace TPdeEFCore01.Datos.Repositorios
 			_dbContext = dbContext ?? throw new ArgumentException(nameof(dbContext));
 		}
 
+
 		public bool Exist(Brand brand)
 		{
 			if (brand.BrandId == 0)

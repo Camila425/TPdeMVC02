@@ -7,5 +7,6 @@ namespace TPdeEFCore01.Datos.Interfaces
         void Update(Brand brand);
         bool Exist(Brand brand);
         bool ItsRelated(int id);
+
     }
 }

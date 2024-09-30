@@ -54,7 +54,7 @@ namespace TPDeMVC02.Web.Controllers
                 catch (Exception)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError,
-                        "An error occurred while retrieving the record");
+						"An error occurred while record");
                 }
             }
             return View(genreEditVm);
@@ -88,7 +88,7 @@ namespace TPDeMVC02.Web.Controllers
             }
             catch (Exception)
             {
-                ModelState.AddModelError(string.Empty, "An error occurred while editing the record");
+                ModelState.AddModelError(string.Empty, "An error occurred while record");
                 return View(genreEditVm);
             }
         }

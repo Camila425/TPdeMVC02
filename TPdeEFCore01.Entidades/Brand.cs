@@ -11,6 +11,8 @@ namespace TPdeEFCore01.Entidades
         [StringLength(50)]
         public string BrandName { get; set; } = null!;
         public ICollection<Shoe> shoes { get; set; } = new List<Shoe>();
+        public string? ImageUrl { get; set; }
+
         public bool Active { get; set; } = true; 
 
     }

@@ -10,6 +10,7 @@
 		public string Color { get; set; } = null!;
 		public string Model { get; set; } = null!;
 		public decimal Price { get; set; }
-		public int QuantityInStock { get; set; }
+        public bool Active { get; set; }
+        public int QuantityInStock { get; set; }
 	}
 }

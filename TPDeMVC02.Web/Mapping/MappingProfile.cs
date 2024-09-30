@@ -28,7 +28,7 @@ namespace TPDeMVC02.Web.Mapping
              .ForMember(dest => dest.Sport, opt => opt.MapFrom(src => src.Sport.SportName))
              .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.GenreName))
              .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color.ColorName));
-              CreateMap<Shoe, ShoeEditVm>().ReverseMap();
+			  CreateMap<Shoe, ShoeEditVm>().ReverseMap();
 		}
 
 		private void LoadSizesMapping()
@@ -39,6 +39,7 @@ namespace TPDeMVC02.Web.Mapping
 		private void LoadColorsMapping()
 		{
             CreateMap<Color, ColorListVm>();
+			CreateMap<Color, ColorDetailsVm>();
 			CreateMap<Color, ColorEditVm>().ReverseMap();
 		}
 
@@ -56,6 +57,7 @@ namespace TPDeMVC02.Web.Mapping
         private void LoadBrandsMapping()
         {
             CreateMap<Brand, BrandListVm>();
+			CreateMap<Brand, BrandDetailsVm>();
 			CreateMap<Brand, BrandEditVm>().ReverseMap();
 
 		}
