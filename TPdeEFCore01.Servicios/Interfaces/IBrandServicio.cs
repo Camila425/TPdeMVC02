@@ -3,7 +3,7 @@ using TPdeEFCore01.Entidades;
 
 namespace TPdeEFCore01.Servicios.Interfaces
 {
-	public interface IBrandService
+	public interface IBrandServicio
 	{
 		IEnumerable<Brand>? GetAll(Expression<Func<Brand, bool>>? filter = null,
 	    Func<IQueryable<Brand>, IOrderedQueryable<Brand>>? orderBy = null,string? propertiesNames = null);

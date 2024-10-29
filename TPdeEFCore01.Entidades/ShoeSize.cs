@@ -1,12 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-
-namespace TPdeEFCore01.Entidades
+﻿namespace TPdeEFCore01.Entidades
 {
-    [Index(nameof(ShoeId), nameof(SizeId), IsUnique = true)]
-    public class ShoeSizes
+    public class ShoeSize
     {
-        [Key]
         public int ShoeSizeId { get; set; }
         public int ShoeId { get; set; }
         public Shoe shoe { get; set; } = null!;

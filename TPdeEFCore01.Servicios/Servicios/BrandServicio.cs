@@ -6,7 +6,7 @@ using TPdeEFCore01.Servicios.Interfaces;
 
 namespace TPdeEFCore01.Servicios.Repositorios
 {
-    public class BrandServicio : IBrandService
+    public class BrandServicio : IBrandServicio
     {
         private readonly IBrandsRepositorio? _repository;
         private readonly IUnitOfWork _unitOfWork;

@@ -7,7 +7,7 @@ namespace TPdeEFCore01.Entidades
     {
         public int SizeId { get; set; }
         public decimal SizeNumber { get; set; }
-        public ICollection<ShoeSizes> shoeSizes { get; set; } = new List<ShoeSizes>();
+        public ICollection<ShoeSize> shoeSizes { get; set; } = new List<ShoeSize>();
 
     }
 }

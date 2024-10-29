@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TPdeEFCore01.Entidades;
+using TPdeEFCore01.Entidades.Dtos;
 using TPDeMVC02.Web.ViewModels.Brands;
 using TPDeMVC02.Web.ViewModels.Colors;
 using TPDeMVC02.Web.ViewModels.Genres;
@@ -29,7 +30,13 @@ namespace TPDeMVC02.Web.Mapping
              .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre.GenreName))
              .ForMember(dest => dest.Color, opt => opt.MapFrom(src => src.Color.ColorName));
 			  CreateMap<Shoe, ShoeEditVm>().ReverseMap();
-		}
+              CreateMap<Shoe, ShoeAssignSizesVm>();
+              CreateMap<ShoeAssignSizesVm, ShoeSizeDto>()
+                .ForMember(dest => dest.ShoeId, opt => opt.MapFrom(src => src.ShoeId))
+                .ForMember(dest => dest.SizeId, opt => opt.MapFrom(src => src.NewSizeId))
+                .ForMember(dest => dest.Stock,  opt => opt.MapFrom(src => src.NewStock));
+
+        }
 
 		private void LoadSizesMapping()
 		{

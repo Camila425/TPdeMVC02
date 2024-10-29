@@ -1,0 +1,65 @@
+﻿@model ShoeAssignSizesVm
+@{
+    ViewData["Title"] = "Assign Sizes to Shoe";
+}
+
+<h2>Assign Sizes to Shoe</h2>
+
+<form asp-action="AssignSizes" method="post">
+    <input type="hidden" asp-for="ShoeId" />
+    <input type="hidden" asp-for="@Model.Model" />
+
+    <div class="form-group row mb-3">
+        <div class="col-4">
+            <label for="NewSizeId">Add New Size</label>
+            <select class="form-control" asp-for="NewSizeId" asp-items="Model.AllSizes">
+                <option value="">Select a Size</option>
+            </select>
+
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label for="NewStock">New Stock:</label>
+                <input class="form-control" type="number" step="0" asp-for="NewStock" />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group m-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="btn btn-success" asp-action="Index">Back to List</a>
+
+    </div>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>SizeNumber</th>
+                <th>Stock</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.AvailableSizes.Any())
+            {
+                foreach (var size in Model.AvailableSizes)
+                {
+                    <tr>
+                        <td>@size.SizeNumber</td>
+                        <td>@size.Stock</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td style="text-align:center" class="text-danger fw-bold" colspan="2">
+                        No Sizes have been added yet
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</form>
+

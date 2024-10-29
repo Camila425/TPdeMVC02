@@ -15,7 +15,7 @@ namespace TPdeEFCore01.Iol
 		public static void ConfigurarServicios(IServiceCollection servicios, IConfiguration configuration)
 		{
 			servicios.AddScoped<IBrandsRepositorio, BrandRepositorio>();
-			servicios.AddScoped<IBrandService, BrandServicio>();
+			servicios.AddScoped<IBrandServicio, BrandServicio>();
 
 			servicios.AddScoped<IGenresRepositorio, GenreRepositorio>();
 			servicios.AddScoped<IGenreServicio, GenreServicio>();
@@ -32,8 +32,10 @@ namespace TPdeEFCore01.Iol
 			servicios.AddScoped<IUnitOfWork, UnitOfWork>();
 			servicios.AddScoped<ISizeServicio, SizeServicio>();
 			servicios.AddScoped<ISizeRepositorio, SizeRepositorio>();
+            servicios.AddScoped<IShoeSizesServicio, ShoeSizesServicio>();
+            servicios.AddScoped<IShoeSizesRepositorio, ShoeSizesRepositorio>();
 
-			servicios.AddDbContext<ShoesDbContext>(opciones =>
+            servicios.AddDbContext<ShoesDbContext>(opciones =>
 			{
 				opciones.UseSqlServer(
 				   configuration.GetConnectionString("MyConnection"));

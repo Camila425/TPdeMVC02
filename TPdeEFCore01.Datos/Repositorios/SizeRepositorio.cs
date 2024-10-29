@@ -24,7 +24,7 @@ namespace TPdeEFCore01.Datos.Repositorios
 
 		public bool ItsRelated(int id)
 		{
-			return _dbContext.shoeSizes.Any(s => s.SizeId == id);
+			return _dbContext.ShoeSizes.Any(s => s.SizeId == id);
 		}
 
 		public void Update(Size size)

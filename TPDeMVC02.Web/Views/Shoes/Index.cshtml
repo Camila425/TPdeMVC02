@@ -112,15 +112,15 @@
 	<table class="table table-bordered table-hover mt-3">
 		<thead>
 			<tr>
-				<th style="width:35%">Description</th>
+				<th style="width:30%">Description</th>
 				<th style="width:5%">BrandName</th>
 				<th style="width:5%">SportName</th>
 				<th style="width:5%">GenreName</th>
 				<th style="width:5%">ColorName</th>
-				<th style="width:15%">Model</th>
+				<th style="width:10%">Model</th>
 				<th style="width:5%">Price</th>
 				<th style="width:5%">Active</th>
-				<th style="width:20%">Actions</th>
+				<th style="width:30%">Actions</th>
 
 			</tr>
 		</thead>
@@ -150,7 +150,7 @@
 							@item.Model
 						</td>
 						<td>
-							@item.Price
+							@item.Price.ToString("N2");
 						</td>
 						<td>
 							<input type="checkbox" asp-for="@item.Active" disabled />
@@ -163,6 +163,10 @@
 							<a onclick="Delete('/Shoes/Delete/@item.ShoeId',@item.ShoeId,'@item.Description')" class="btn btn-danger">
 								<i class="bi bi-trash-fill"></i>
 								Delete
+							</a>
+							<a class="btn btn-info" asp-controller="Shoes" asp-action="AssignSizes" asp-route-id="@item.ShoeId">
+								<i class="bi bi-card-checklist"></i>
+								Sizes
 							</a>
 						</td>
 					</tr>

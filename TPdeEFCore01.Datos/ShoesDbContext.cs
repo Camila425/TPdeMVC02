@@ -5,20 +5,18 @@ namespace TPdeEFCore01.Datos
 {
     public class ShoesDbContext : DbContext
     {
-        public ShoesDbContext()
-        {
-                
-        }
-        public ShoesDbContext(DbContextOptions<ShoesDbContext> options)
-      : base(options)
-        {
-        }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Color> Colors { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<Sport> Sports { get; set; }
+        public DbSet<Shoe> shoes { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DbSet<Size> Sizes { get; set; }
+        public DbSet<ShoeSize> ShoeSizes { get; set; }
+       
+        public ShoesDbContext(DbContextOptions<ShoesDbContext> options): base(options)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=.; Initial Catalog=TPEFCore01; 
-                Trusted_Connection=true;
-                TrustServerCertificate=true;");
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -135,11 +133,10 @@ namespace TPdeEFCore01.Datos
            .HasIndex(s => s.SizeNumber)
            .IsUnique();
 
-            modelBuilder.Entity<ShoeSizes>(entity =>
+            modelBuilder.Entity<ShoeSize>(entity =>
             {
                 entity.HasKey(ss => new {
-                    ss.ShoeId,
-                    ss.SizeId
+                    ss.ShoeSizeId
                 });
 
                 entity.HasOne(ss => ss.shoe)
@@ -156,14 +153,7 @@ namespace TPdeEFCore01.Datos
         
     }
 
-        public DbSet<Brand> Brands { get; set; }
-        public DbSet<Color> Colors { get; set; }
-        public DbSet<Genre> Genres { get; set; }
-        public DbSet<Sport> Sports { get; set; }
-        public DbSet<Shoe> shoes { get; set; }
-
-        public DbSet<Size> Sizes { get; set; }
-        public DbSet<ShoeSizes> shoeSizes { get; set; }
+       
 
 
     }

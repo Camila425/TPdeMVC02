@@ -10,13 +10,13 @@ namespace TPDeMVC02.Web.Controllers
 {
 	public class BrandsController : Controller
 	{
-		private readonly IBrandService? _BrandService;
+		private readonly IBrandServicio? _BrandService;
 		private readonly IShoeServicio? _shoeServicio;
 
 		private readonly IMapper? _mapper;
 		private readonly IWebHostEnvironment? _webHostEnvironment;
 
-		public BrandsController(IBrandService? BrandService, IShoeServicio? shoeServicio,
+		public BrandsController(IBrandServicio? BrandService, IShoeServicio? shoeServicio,
 		  IWebHostEnvironment webHostEnvironment,
 			IMapper mapper)
 		{
@@ -83,8 +83,16 @@ namespace TPDeMVC02.Web.Controllers
 					{
 						return NotFound();
 					}
-					var filePath = Path.Combine(wwwWebRoot, brand.ImageUrl!.TrimStart('/'));
-					ViewData["ImageExist"] = System.IO.File.Exists(filePath);
+					if (!string.IsNullOrEmpty(brand.ImageUrl))
+					{
+						var filePath = Path.Combine(wwwWebRoot, brand.ImageUrl!.TrimStart('/'));
+						ViewData["ImageExist"] = System.IO.File.Exists(filePath);
+					}
+					else
+					{
+						ViewData["ImageExist"] = false;
+
+                    }
 					brandEditVm = _mapper.Map<BrandEditVm>(brand);
 					return View(brandEditVm);
 				}

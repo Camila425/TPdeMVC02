@@ -26,7 +26,7 @@ namespace TPdeEFCore01.Entidades
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
         public bool Active { get; set; } = true;
-        public ICollection<ShoeSizes> shoeSizes { get; set; } = new List<ShoeSizes>();
+        public ICollection<ShoeSize> shoeSizes { get; set; } = new List<ShoeSize>();
 
 
     }

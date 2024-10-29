@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TPdeEFCore01.Entidades;
+using TPdeEFCore01.Entidades.Dtos;
 using TPdeEFCore01.Servicios.Interfaces;
 using TPDeMVC02.Web.ViewModels.Shoes;
 using X.PagedList.Extensions;
@@ -11,14 +12,19 @@ namespace TPDeMVC02.Web.Controllers
     public class ShoesController : Controller
     {
         private readonly IShoeServicio? _shoeServicio;
-        private readonly IBrandService? _brandService;
+        private readonly IBrandServicio? _brandService;
         private readonly ISportServicio? _sportServicio;
         private readonly IGenreServicio? _genreServicio;
         private readonly IColorServicio? _colorServicio;
+        private readonly IShoeSizesServicio? _shoeSizesServicio;
+        private readonly ISizeServicio? _sizeServicio;
+
         private readonly IMapper? _mapper;
 
-        public ShoesController(IShoeServicio? shoeServicio, IBrandService brandService, ISportServicio sportServicio,
+        public ShoesController(IShoeServicio? shoeServicio, IBrandServicio brandService, ISportServicio sportServicio,
             IGenreServicio genreServicio, IColorServicio colorServicio,
+			IShoeSizesServicio? shoeSizesServicio,
+            ISizeServicio? sizeServicio,
             IMapper? mapper)
         {
             _shoeServicio = shoeServicio ?? throw new ApplicationException("Dependencies not set");
@@ -26,6 +32,8 @@ namespace TPDeMVC02.Web.Controllers
             _sportServicio = sportServicio ?? throw new ApplicationException("Dependencies not set");
             _genreServicio = genreServicio ?? throw new ApplicationException("Dependencies not set");
             _colorServicio = colorServicio ?? throw new ApplicationException("Dependencies not set");
+			_shoeSizesServicio = shoeSizesServicio ?? throw new ApplicationException("Dependencies not set");
+            _sizeServicio = sizeServicio ?? throw new ApplicationException("Dependencies not set");
             _mapper = mapper;
         }
 		public IActionResult Index(int? page, int? filterBrandId,int? filterColorId,
@@ -135,7 +143,6 @@ namespace TPDeMVC02.Web.Controllers
                 catch (Exception)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the record");
-                    throw;
                 }
             }
             return View(shoeEditVm);
@@ -251,7 +258,7 @@ namespace TPDeMVC02.Web.Controllers
 
                 if (_shoeServicio.ItsRelated(shoe.ShoeId))
                 {
-                    return Json(new { success = false, message = "Related Record...Delete Deny!!" });
+                    return Json(new { success = false, message = "Related Record.   Delete Deny!!" });
 
                 }
                 _shoeServicio.Delete(shoe);
@@ -259,9 +266,78 @@ namespace TPDeMVC02.Web.Controllers
             }
             catch (Exception)
             {
-                return Json(new { success = false, message = "Couldn't delete record!!!" }); ;
+                return Json(new { success = false, message = "Couldn't delete record!!" }); ;
 
             }
         }
-    }
+
+        public IActionResult AssignSizes(int? id)
+        {
+            ShoeAssignSizesVm shoeVm;
+            if (id==null || id==0)
+            {
+                return NotFound();
+            }
+            else
+            {
+                try
+                {
+                    Shoe? shoe = _shoeServicio?.Get(filter: s => s.ShoeId == id);
+                    if (shoe==null)
+                    {
+                        return NotFound();
+                    }
+                    shoeVm = _mapper!.Map<ShoeAssignSizesVm>(shoe);
+                    shoeVm.AvailableSizes = GetSizesWithStocks(shoe.ShoeId);
+
+                    var assignedSizeIds = shoeVm.AvailableSizes.Select(s => s.SizeId).ToList();
+                    shoeVm.AllSizes = GetAllAvailableAndNotAssignedSizes(shoeVm, assignedSizeIds);
+
+				}
+                catch (Exception)
+                {
+                    throw;
+                }
+				return View(shoeVm);
+			}
+        }
+
+		private IEnumerable<SelectListItem> GetAllAvailableAndNotAssignedSizes
+            (ShoeAssignSizesVm shoeVm, List<int> assignedSizeIds)
+		{
+            return _sizeServicio!.GetAll(filter: S => !assignedSizeIds.Contains(S.SizeId))!
+                .Select(s => new SelectListItem
+                {
+                    Value = s.SizeId.ToString(),
+                    Text = s.SizeNumber.ToString()
+                }).ToList();
+		}
+
+		public List<ShoeSizeVm> GetSizesWithStocks(int shoeId)
+		{
+            var AssignedSizes = _shoeSizesServicio!.GetAll(filter: ss => ss.ShoeId == shoeId, propertiesNames: "size")!
+                .Select(ss => new ShoeSizeVm
+                {
+                    SizeId = ss.SizeId,
+                    SizeNumber = ss.size.SizeNumber,
+                    Stock = ss.QuantityInStock,
+                    IsSelected = true
+                }).ToList();
+            return AssignedSizes;
+        }
+
+        [HttpPost]
+        public IActionResult AssignSizes(ShoeAssignSizesVm shoeAssignSizesVm)
+        {
+            if (ModelState.IsValid)
+            {
+                var ShoeSizeDto = _mapper!.Map<ShoeSizeDto>(shoeAssignSizesVm);
+                _shoeSizesServicio!.AssignSizesAndStockToShoe(ShoeSizeDto);
+                return RedirectToAction("AssignSizes");
+            }
+
+            shoeAssignSizesVm.AvailableSizes = GetSizesWithStocks(shoeAssignSizesVm.ShoeId);
+            return View(shoeAssignSizesVm);
+        }
+	}
 }
