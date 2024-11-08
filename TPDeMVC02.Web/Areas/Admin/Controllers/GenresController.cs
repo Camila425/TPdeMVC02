@@ -5,8 +5,9 @@ using TPdeEFCore01.Servicios.Interfaces;
 using TPDeMVC02.Web.ViewModels.Genres;
 using X.PagedList.Extensions;
 
-namespace TPDeMVC02.Web.Controllers
+namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class GenresController : Controller
     {
         private readonly IGenreServicio? _genreServicio;
@@ -54,7 +55,7 @@ namespace TPDeMVC02.Web.Controllers
                 catch (Exception)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError,
-						"An error occurred while record");
+                        "An error occurred while record");
                 }
             }
             return View(genreEditVm);

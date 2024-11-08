@@ -1,17 +1,17 @@
-﻿@model IPagedList<BrandListVm>
+﻿@model IPagedList<SportListVm>
 @using X.PagedList
 @using X.Web.PagedList
 @{
-	ViewData["Title"] = "List Brands";
+	ViewData["Title"] = "List Sports";
 }
 @Html.AntiForgeryToken()
 <div class="row mb-3">
 	<div class="col-6">
-		<h3>Brands List</h3>
+		<h3>Sports List</h3>
 
 	</div>
 	<div class="col-6 text-end">
-		<a asp-controller="Brands" asp-action="Upsert" class="btn btn-primary">
+		<a asp-controller="Sports" asp-action="Upsert" class="btn btn-primary">
 			<i class="bi bi-plus-circle-fill"></i>
 			Nuevo
 		</a>
@@ -57,9 +57,8 @@
 <table class="table table-bordered table-hover mt-3">
 	<thead>
 		<tr>
-			<th class="col-5">Brand Name</th>
-			<th class="col-2">ShoesQuantity</th>
-			<th class="col-3">Acciones</th>
+			<th class="col-9">Sport Name</th>
+			<th class="col-2">Acciones</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -67,21 +66,16 @@
 		{
 			foreach (var item in Model)
 			{
-				<tr id="@item.BrandId">
-					<td>@item.BrandName</td>
-					<td style="text-align:right">@item.ShoesQuantity</td>
+				<tr id="@item.SportId">
+					<td>@item.SportName</td>
 					<td class="text-end">
-						<a onclick="Delete('/Brands/Delete/@item.BrandId',@item.BrandId,'@item.BrandName')" class="btn btn-danger ">
+						<a onclick="Delete('/Admin/Sports/Delete/@item.SportId',@item.SportId,'@item.SportName')" class="btn btn-danger ">
 							<i class="bi bi-trash-fill"></i>
 							Delete
 						</a>
-						<a asp-controller="Brands" asp-action="Upsert" asp-route-id="@item.BrandId" class="btn btn-warning ">
+						<a asp-controller="Sports" asp-action="Upsert" asp-route-id="@item.SportId" class="btn btn-warning ">
 							<i class="bi bi-pencil-fill"></i>
 							Edit
-						</a>
-						<a class="btn btn-info" asp-controller="Brands" asp-action="Details" asp-route-id="@item.BrandId">
-							<i class="bi bi-card-list"></i>&nbsp;
-							Details
 						</a>
 
 					</td>
@@ -92,7 +86,7 @@
 		{
 			<tr>
 				<td colspan="2" class="text-center">
-					No Hay Brands
+					No Hay Sports
 				</td>
 			</tr>
 		}
@@ -104,4 +98,5 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<script src="~/js/Common.js"></script>
 
+	 </script>
 }

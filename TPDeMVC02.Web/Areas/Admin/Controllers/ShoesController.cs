@@ -7,8 +7,9 @@ using TPdeEFCore01.Servicios.Interfaces;
 using TPDeMVC02.Web.ViewModels.Shoes;
 using X.PagedList.Extensions;
 
-namespace TPDeMVC02.Web.Controllers
+namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class ShoesController : Controller
     {
         private readonly IShoeServicio? _shoeServicio;
@@ -23,7 +24,7 @@ namespace TPDeMVC02.Web.Controllers
 
         public ShoesController(IShoeServicio? shoeServicio, IBrandServicio brandService, ISportServicio sportServicio,
             IGenreServicio genreServicio, IColorServicio colorServicio,
-			IShoeSizesServicio? shoeSizesServicio,
+            IShoeSizesServicio? shoeSizesServicio,
             ISizeServicio? sizeServicio,
             IMapper? mapper)
         {
@@ -32,88 +33,88 @@ namespace TPDeMVC02.Web.Controllers
             _sportServicio = sportServicio ?? throw new ApplicationException("Dependencies not set");
             _genreServicio = genreServicio ?? throw new ApplicationException("Dependencies not set");
             _colorServicio = colorServicio ?? throw new ApplicationException("Dependencies not set");
-			_shoeSizesServicio = shoeSizesServicio ?? throw new ApplicationException("Dependencies not set");
+            _shoeSizesServicio = shoeSizesServicio ?? throw new ApplicationException("Dependencies not set");
             _sizeServicio = sizeServicio ?? throw new ApplicationException("Dependencies not set");
             _mapper = mapper;
         }
-		public IActionResult Index(int? page, int? filterBrandId,int? filterColorId,
-            int pageSize = 10, bool viewAll = false,string orderBy= "Description")
-		{
-			int PageNumber = page ?? 1;
-			ViewBag.currentPageSize = pageSize;
-			ViewBag.currentOrderBy = orderBy;
+        public IActionResult Index(int? page, int? filterBrandId, int? filterColorId,
+            int pageSize = 10, bool viewAll = false, string orderBy = "Description")
+        {
+            int PageNumber = page ?? 1;
+            ViewBag.currentPageSize = pageSize;
+            ViewBag.currentOrderBy = orderBy;
 
-			var Brands = _brandService!.GetAll(orderBy: o => o.OrderBy(b => b.BrandName))!.ToList();
-			var colors = _colorServicio!.GetAll(orderBy: o => o.OrderBy(c => c.ColorName))!.ToList();
-			IEnumerable<Shoe>? shoes;
+            var Brands = _brandService!.GetAll(orderBy: o => o.OrderBy(b => b.BrandName))!.ToList();
+            var colors = _colorServicio!.GetAll(orderBy: o => o.OrderBy(c => c.ColorName))!.ToList();
+            IEnumerable<Shoe>? shoes;
 
-			if (viewAll || (filterBrandId is null && filterColorId is null))
-			{
-				shoes = _shoeServicio?.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-					propertiesNames: "Brand,Sport,Genre,Color");
-			}
-			else
-			{
-				if (filterBrandId.HasValue)
-				{
-					shoes = _shoeServicio!.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-						filter: b => b.BrandId == filterBrandId.Value,
-						propertiesNames: "Brand,Sport,Genre,Color");
-				}
-				else if (filterColorId.HasValue)
-				{
-					shoes = _shoeServicio!.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-					filter: s => s.ColorId == filterColorId.Value,
-					propertiesNames: "Brand,Sport,Genre,Color");
-				}
-				else
-				{
-					shoes = _shoeServicio?.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-						propertiesNames: "Brand,Sport,Genre,Color");
-				}
-			}
+            if (viewAll || filterBrandId is null && filterColorId is null)
+            {
+                shoes = _shoeServicio?.GetAll(orderBy: o => o.OrderBy(s => s.Description),
+                    propertiesNames: "Brand,Sport,Genre,Color");
+            }
+            else
+            {
+                if (filterBrandId.HasValue)
+                {
+                    shoes = _shoeServicio!.GetAll(orderBy: o => o.OrderBy(s => s.Description),
+                        filter: b => b.BrandId == filterBrandId.Value,
+                        propertiesNames: "Brand,Sport,Genre,Color");
+                }
+                else if (filterColorId.HasValue)
+                {
+                    shoes = _shoeServicio!.GetAll(orderBy: o => o.OrderBy(s => s.Description),
+                    filter: s => s.ColorId == filterColorId.Value,
+                    propertiesNames: "Brand,Sport,Genre,Color");
+                }
+                else
+                {
+                    shoes = _shoeServicio?.GetAll(orderBy: o => o.OrderBy(s => s.Description),
+                        propertiesNames: "Brand,Sport,Genre,Color");
+                }
+            }
 
-			var shoesVm = _mapper?.Map<List<ShoeListVm>>(shoes);
-		
-			if (orderBy=="Brand")
+            var shoesVm = _mapper?.Map<List<ShoeListVm>>(shoes);
+
+            if (orderBy == "Brand")
             {
                 shoesVm = shoesVm!.OrderBy(b => b.Brand).ToList();
             }
-			if (orderBy == "Genre")
-			{
-				shoesVm = shoesVm!.OrderBy(g => g.Genre).ToList();
-			}
-			if (orderBy == "Sport")
-			{
-				shoesVm = shoesVm!.OrderBy(s => s.Sport).ToList();
-			}
-			if (orderBy == "Color")
-			{
-				shoesVm = shoesVm!.OrderBy(c=> c.Color).ToList();
-			}
-			if (orderBy == "Model")
-			{
-				shoesVm = shoesVm!.OrderBy(s => s.Model).ToList();
-			}
+            if (orderBy == "Genre")
+            {
+                shoesVm = shoesVm!.OrderBy(g => g.Genre).ToList();
+            }
+            if (orderBy == "Sport")
+            {
+                shoesVm = shoesVm!.OrderBy(s => s.Sport).ToList();
+            }
+            if (orderBy == "Color")
+            {
+                shoesVm = shoesVm!.OrderBy(c => c.Color).ToList();
+            }
+            if (orderBy == "Model")
+            {
+                shoesVm = shoesVm!.OrderBy(s => s.Model).ToList();
+            }
 
-			var ShoeFilterVm = new ShoeFilterVm
-			{
-				Shoes = shoesVm!.ToPagedList(PageNumber, pageSize),
-				Brands = Brands.Select(b => new SelectListItem
-				{
-					Text = b.BrandName,
-					Value = b.BrandId.ToString()
-				}).ToList(),
-				Colors = colors.Select(c => new SelectListItem
-				{
-					Text = c.ColorName,
-					Value = c.ColorId.ToString()
-				}).ToList()
-			};
-			return View(ShoeFilterVm);
-		}
+            var ShoeFilterVm = new ShoeFilterVm
+            {
+                Shoes = shoesVm!.ToPagedList(PageNumber, pageSize),
+                Brands = Brands.Select(b => new SelectListItem
+                {
+                    Text = b.BrandName,
+                    Value = b.BrandId.ToString()
+                }).ToList(),
+                Colors = colors.Select(c => new SelectListItem
+                {
+                    Text = c.ColorName,
+                    Value = c.ColorId.ToString()
+                }).ToList()
+            };
+            return View(ShoeFilterVm);
+        }
 
-		public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id)
         {
             ShoeEditVm shoeEditVm;
             if (id == null || id == 0)
@@ -274,7 +275,7 @@ namespace TPDeMVC02.Web.Controllers
         public IActionResult AssignSizes(int? id)
         {
             ShoeAssignSizesVm shoeVm;
-            if (id==null || id==0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
@@ -283,7 +284,7 @@ namespace TPDeMVC02.Web.Controllers
                 try
                 {
                     Shoe? shoe = _shoeServicio?.Get(filter: s => s.ShoeId == id);
-                    if (shoe==null)
+                    if (shoe == null)
                     {
                         return NotFound();
                     }
@@ -293,28 +294,28 @@ namespace TPDeMVC02.Web.Controllers
                     var assignedSizeIds = shoeVm.AvailableSizes.Select(s => s.SizeId).ToList();
                     shoeVm.AllSizes = GetAllAvailableAndNotAssignedSizes(shoeVm, assignedSizeIds);
 
-				}
+                }
                 catch (Exception)
                 {
                     throw;
                 }
-				return View(shoeVm);
-			}
+                return View(shoeVm);
+            }
         }
 
-		private IEnumerable<SelectListItem> GetAllAvailableAndNotAssignedSizes
+        private IEnumerable<SelectListItem> GetAllAvailableAndNotAssignedSizes
             (ShoeAssignSizesVm shoeVm, List<int> assignedSizeIds)
-		{
+        {
             return _sizeServicio!.GetAll(filter: S => !assignedSizeIds.Contains(S.SizeId))!
                 .Select(s => new SelectListItem
                 {
                     Value = s.SizeId.ToString(),
                     Text = s.SizeNumber.ToString()
                 }).ToList();
-		}
+        }
 
-		public List<ShoeSizeVm> GetSizesWithStocks(int shoeId)
-		{
+        public List<ShoeSizeVm> GetSizesWithStocks(int shoeId)
+        {
             var AssignedSizes = _shoeSizesServicio!.GetAll(filter: ss => ss.ShoeId == shoeId, propertiesNames: "size")!
                 .Select(ss => new ShoeSizeVm
                 {
@@ -339,5 +340,5 @@ namespace TPDeMVC02.Web.Controllers
             shoeAssignSizesVm.AvailableSizes = GetSizesWithStocks(shoeAssignSizesVm.ShoeId);
             return View(shoeAssignSizesVm);
         }
-	}
+    }
 }

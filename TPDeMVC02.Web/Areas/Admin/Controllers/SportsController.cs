@@ -5,8 +5,9 @@ using TPdeEFCore01.Servicios.Interfaces;
 using TPDeMVC02.Web.ViewModels.Sports;
 using X.PagedList.Extensions;
 
-namespace TPDeMVC02.Web.Controllers
+namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class SportsController : Controller
     {
         private readonly ISportServicio? _sportServicio;
@@ -27,7 +28,7 @@ namespace TPDeMVC02.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    Sports = _sportServicio?.GetAll(orderBy: o => o.OrderBy(s => s.SportName), 
+                    Sports = _sportServicio?.GetAll(orderBy: o => o.OrderBy(s => s.SportName),
                         filter: s => s.SportName.Contains(searchTerm));
                     ViewBag.currentSearchTerm = searchTerm;
                 }
@@ -70,7 +71,7 @@ namespace TPDeMVC02.Web.Controllers
                 }
                 catch (Exception)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError,"An error occurred while record");
+                    return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while record");
                 }
             }
             return View(sportEditVm);

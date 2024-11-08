@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
     <PackageReference Include="X.Web.PagedList" Version="10.1.2" />
   </ItemGroup>
 
@@ -17,6 +17,10 @@
     <ProjectReference Include="..\TPdeEFCore01.Entidades\TPdeEFCore01.Entidades.csproj" />
     <ProjectReference Include="..\TPdeEFCore01.Iol\TPdeEFCore01.Iol.csproj" />
     <ProjectReference Include="..\TPdeEFCore01.Servicios\TPdeEFCore01.Servicios.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
