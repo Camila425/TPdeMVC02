@@ -13,11 +13,15 @@ namespace TPDeMVC02.Web.Areas.Customer.Controllers
         {
             _logger = logger;
         }
-
+        public IActionResult Hero()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             return View();
         }
+
 
         public IActionResult Privacy()
         {

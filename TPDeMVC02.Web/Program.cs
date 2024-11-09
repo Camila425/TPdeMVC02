@@ -31,7 +31,7 @@ namespace TPDeMVC02.Web
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+                pattern: "{area=Customer}/{controller=Home}/{action=Hero}/{id?}");
 
             app.Run();
         }
