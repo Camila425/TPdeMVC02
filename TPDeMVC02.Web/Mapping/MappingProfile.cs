@@ -35,10 +35,19 @@ namespace TPDeMVC02.Web.Mapping
                 .ForMember(dest => dest.ShoeId, opt => opt.MapFrom(src => src.ShoeId))
                 .ForMember(dest => dest.SizeId, opt => opt.MapFrom(src => src.NewSizeId))
                 .ForMember(dest => dest.Stock,  opt => opt.MapFrom(src => src.NewStock));
+              CreateMap<Shoe, ShoeHomeIndexVm>()
+              .ForMember(dest => dest.ListPrice, opt => opt.MapFrom(src => src.Price))
+              .ForMember(dest => dest.CashPrice, opt => opt.MapFrom(src => src.Price * 0.9m))
+              .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.ImageUrl));
+
+
+
+
+
 
         }
 
-		private void LoadSizesMapping()
+        private void LoadSizesMapping()
 		{
 			CreateMap<Size, SizeEditVm>().ReverseMap();
 		}

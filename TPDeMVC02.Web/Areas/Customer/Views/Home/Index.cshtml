@@ -1,9 +1,73 @@
-﻿@{
+﻿@model IPagedList<ShoeHomeIndexVm>
+@using X.PagedList
+@using X.Web.PagedList
+@{
     ViewData["Title"] = "Zapateria";
-}
- 
-<div class="text-center" style="padding:30px;">
-    <h1 class="display-4" style="font-family: 'Courier New',monospace;color:lightslategrey">
-        ZAPATERIA</h1>
-    <p>Zapatos y Mucho Mas <a href="https://learn.microsoft.com/aspnet/core"></a>.</p>
+    string ShrinkShoeDescripcion(string Descripcion)
+    {
+        return Descripcion.Length >= 20 ? $"{Descripcion.Substring(0, 15)}..." : Descripcion;
+    }
+ }
+<div class="row">
+    @foreach (var shoe in Model)
+    {
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12 p1">
+                    <div class="card border-0 p-3 shadow border-top border-5 rounded">
+                        <img src="@(string.IsNullOrEmpty(shoe.Brand)?"/images/SinImagenDisponible.jpg":shoe.Brand)" 
+                        class="card-img-top d-block mx-auto" alt="..." style="width: 150px; height: 90px; object-fit: cover;">
+                        <div class="card-body pb-0">
+                            <div class="pl-1">
+                                <p class="card-text text-center h5 text-dark opacity-75">@ShrinkShoeDescripcion(shoe.Description)</p>
+                                <p class="card-text text-center text-dark">@shoe.Model</p>
+
+                            </div>
+                            @if (shoe.Active)
+                            {
+                                <p class="text-center">
+                                    <span class="badge bg-primary">Active</span>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="text-center">
+                                    <span class="badge bg-danger">Inactivo</span>
+                                </p>
+
+                            }
+                            <div class="pl-1">
+                                <p class="text-dark text-center opacity-75 mb-0">
+                                    List Price:
+                                    $<span class="text-decoration-line-through">@shoe.ListPrice</span>
+                                </p>
+
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-center opacity-75">
+                                    As Low As:
+                                    $<span>@shoe.CashPrice.ToString("N2")</span>
+                                </p>
+
+                            </div>
+
+                        </div>
+                        <div>
+                            <a class="btn btn-secondary bg-gradient form-control"
+                               asp-action="Details"
+                               asp-route-id="@shoe.ShoeId">
+                                Details
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    }
+    <partial name="Pager" model="@Model" />
 </div>
+
+ 
+
