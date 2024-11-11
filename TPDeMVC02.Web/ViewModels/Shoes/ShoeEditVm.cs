@@ -46,9 +46,10 @@ namespace TPDeMVC02.Web.ViewModels.Shoes
         [DisplayName("Color")]
         public int ColorId { get; set; }
 		public bool Active { get; set; }
+        public string? ReturnUrl { get; set; }
 
 
-		[ValidateNever]
+        [ValidateNever]
         public List<SelectListItem>? Brands { get; set; } 
 
         [ValidateNever]

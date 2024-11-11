@@ -109,81 +109,8 @@
 			</div>
 		</div>
 	</form>
-	<table class="table table-bordered table-hover mt-3">
-		<thead>
-			<tr>
-				<th style="width:30%">Description</th>
-				<th style="width:5%">BrandName</th>
-				<th style="width:5%">SportName</th>
-				<th style="width:5%">GenreName</th>
-				<th style="width:5%">ColorName</th>
-				<th style="width:10%">Model</th>
-				<th style="width:5%">Price</th>
-				<th style="width:5%">Active</th>
-				<th style="width:30%">Actions</th>
+	<partial name="_ShoeList" model="@Model.Shoes" />
 
-			</tr>
-		</thead>
-		<tbody>
-			@if (Model.Shoes!.Any())
-			{
-				foreach (var item in Model.Shoes!)
-				{
-					<tr id="@item.ShoeId">
-						<td>
-							@item.Description
-
-						</td>
-						<td>
-							@item.Brand
-						</td>
-						<td>
-							@item.Sport
-						</td>
-						<td>
-							@item.Genre
-						</td>
-						<td>
-							@item.Color
-						</td>
-						<td>
-							@item.Model
-						</td>
-						<td>
-							@item.Price.ToString("N2");
-						</td>
-						<td>
-							<input type="checkbox" asp-for="@item.Active" disabled />
-						</td>
-						<td>
-							<a class="btn btn-warning" asp-controller="Shoes" asp-action="UpSert" asp-route-id="@item.ShoeId">
-								<i class="bi bi-pencil-fill"></i>
-								Edit
-							</a>
-							<a onclick="Delete('/Admin/Shoes/Delete/@item.ShoeId',@item.ShoeId,'@item.Description')" class="btn btn-danger">
-								<i class="bi bi-trash-fill"></i>
-								Delete
-							</a>
-							<a class="btn btn-info" asp-controller="Shoes" asp-action="AssignSizes" asp-route-id="@item.ShoeId">
-								<i class="bi bi-card-checklist"></i>
-								Sizes
-							</a>
-						</td>
-					</tr>
-				}
-			}
-			else
-			{
-				<tr>
-					<td colspan="6" class="text-center">
-						No Hay Shoes
-
-					</td>
-				</tr>
-
-			}
-		</tbody>
-	</table>
 	<partial name="Pager" model="@Model.Shoes" />
 
 </div>

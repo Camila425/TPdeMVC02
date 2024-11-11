@@ -114,7 +114,7 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             return View(ShoeFilterVm);
         }
 
-        public IActionResult UpSert(int? id)
+        public IActionResult UpSert(int? id, string? returnUrl=null)
         {
             ShoeEditVm shoeEditVm;
             if (id == null || id == 0)
@@ -139,6 +139,7 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                     shoeEditVm.Genres = GetGenres();
                     shoeEditVm.Sports = GetSports();
                     shoeEditVm.Colors = GetColors();
+                    shoeEditVm.ReturnUrl = returnUrl;
                     return View(shoeEditVm);
                 }
                 catch (Exception)
@@ -196,6 +197,7 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpSert(ShoeEditVm shoeEditVm)
         {
+            string? returnUrl = shoeEditVm.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 shoeEditVm.Brands = GetBrands();
@@ -223,7 +225,14 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                 }
                 _shoeServicio.Save(shoe);
                 TempData["success"] = "Record successfully added/edited";
-                return RedirectToAction("Index");
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
             }
             catch (Exception)
             {

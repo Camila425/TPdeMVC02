@@ -54,51 +54,7 @@
 		</div>
 	</div>
 </form>
-<table class="table table-bordered table-hover mt-3">
-	<thead>
-		<tr>
-			<th class="col-5">Brand Name</th>
-			<th class="col-2">ShoesQuantity</th>
-			<th class="col-3">Acciones</th>
-		</tr>
-	</thead>
-	<tbody>
-		@if (Model.Any())
-		{
-			foreach (var item in Model)
-			{
-				<tr id="@item.BrandId">
-					<td>@item.BrandName</td>
-					<td style="text-align:right">@item.ShoesQuantity</td>
-
-					<td class="text-end">
-						<a onclick="Delete('/Admin/Brands/Delete/@item.BrandId',@item.BrandId,'@item.BrandName')" class="btn btn-danger ">
-							<i class="bi bi-trash-fill"></i>
-							Delete
-						</a>
-						<a asp-controller="Brands" asp-action="Upsert" asp-route-id="@item.BrandId" class="btn btn-warning ">
-							<i class="bi bi-pencil-fill"></i>
-							Edit
-						</a>
-						<a class="btn btn-info" asp-controller="Brands" asp-action="Details" asp-route-id="@item.BrandId">
-							<i class="bi bi-card-list"></i>&nbsp;
-							Details
-						</a>
-
-					</td>
-				</tr>
-			}
-		}
-		else
-		{
-			<tr>
-				<td colspan="2" class="text-center">
-					No Hay Brands
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
+<partial name="_BrandList" model="@Model" />
 <partial name="Pager" model="@Model" />
 @section Scripts {
 	<script src="~/lib/jquery/dist/jquery.js"></script>

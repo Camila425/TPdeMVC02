@@ -5,6 +5,8 @@
 <form method="post" asp-controller="Shoes" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="ShoeId" />
+    <input type="hidden" asp-for="ReturnUrl" />
+
 
     <div class="border p-3 bg-white">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
