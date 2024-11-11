@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using TPdeEFCore01.Entidades;
 using TPdeEFCore01.Servicios.Interfaces;
 using TPDeMVC02.Web.Models;
 using TPDeMVC02.Web.ViewModels.Shoes;
@@ -33,7 +34,21 @@ namespace TPDeMVC02.Web.Areas.Customer.Controllers
             var shoesVm = _mapper!.Map<List<ShoeHomeIndexVm>>(Shoes);
             return View(shoesVm.ToPagedList(currentPage,pageSize));
         }
-
+        public IActionResult Details(int? id)
+        {
+            if (id==null || id.Value==0)
+            {
+                return NotFound();
+            }
+            Shoe? shoe = _shoeServicio!.Get(filter: s => s.ShoeId == id,
+                propertiesNames: "Brand");
+            if (shoe is null)
+            {
+                return NotFound();
+            }
+            ShoeHomeDetailsVm shoeVm = _mapper!.Map<ShoeHomeDetailsVm>(shoe);
+            return View(shoeVm);
+        }
 
         public IActionResult Privacy()
         {
