@@ -18,7 +18,8 @@ namespace TPdeEFCore01.Entidades
 
 
 
-        [StringLength(150)]
+
+		[StringLength(150)]
 
         public string Model { get; set; } = null!;
         [MaxLength]

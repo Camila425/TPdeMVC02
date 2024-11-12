@@ -13,5 +13,6 @@ namespace TPdeEFCore01.Servicios.Interfaces
 		bool tracked = true);
 		bool Exist(Shoe shoe);
 		bool ItsRelated(int id);
-	}
+		List<int> GetAssignedSizeForShoe(Shoe shoe);
+    }
 }

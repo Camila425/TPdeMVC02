@@ -109,8 +109,84 @@
 			</div>
 		</div>
 	</form>
-	<partial name="_ShoeList" model="@Model.Shoes" />
+	<table class="table table-bordered table-hover mt-3">
+		<thead>
+			<tr>
+				<th style="width:25%">Description</th>
+				<th style="width:5%">BrandName</th>
+				<th style="width:5%">SportName</th>
+				<th style="width:5%">GenreName</th>
+				<th style="width:5%">ColorName</th>
+				<th style="width:15%">Model</th>
+				<th style="width:5%">Price</th>
+				<th style="width:5%">Active</th>
+				<th style="width:30%">Actions</th>
 
+			</tr>
+		</thead>
+		<tbody>
+			@if (@Model.Shoes!.Any())
+			{
+				foreach (var item in Model.Shoes!)
+				{
+					<tr id="@item.ShoeId">
+						<td>
+							@item.Description
+
+						</td>
+						<td>
+							@item.Brand
+						</td>
+						<td>
+							@item.Sport
+						</td>
+						<td>
+							@item.Genre
+						</td>
+						<td>
+							@item.Color
+						</td>
+						<td>
+							@item.Model
+						</td>
+						<td>
+							@item.Price
+						</td>
+						<td>
+							<input type="checkbox" asp-for="@item.Active" disabled />
+						</td>
+						<td>
+							<a class="btn btn-warning" asp-controller="Shoes" asp-action="UpSert" asp-route-id="@item.ShoeId"
+							   asp-route-returnUrl="@(Context.Request.Path+Context.Request.QueryString)">
+								<i class="bi bi-pencil-square"></i>&nbsp;
+								Edit
+							</a>
+							<a onclick="Delete('/Shoes/Delete/@item.ShoeId',@item.ShoeId,'@item.Description')"
+							   class="btn btn-danger">
+								<i class="bi bi-trash-fill"></i>
+								Delete
+							</a>
+
+							<a class="btn btn-info" asp-controller="Shoes" asp-action="AssignSizes" asp-route-id="@item.ShoeId">
+								<i class="bi bi-list-check"></i>
+								Sizes
+							</a>
+
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="6" class="text-center">
+						No Hay Shoes
+					</td>
+				</tr>
+
+			}
+		</tbody>
+	</table>
 	<partial name="Pager" model="@Model.Shoes" />
 
 </div>

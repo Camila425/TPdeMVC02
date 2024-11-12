@@ -44,8 +44,6 @@ namespace TPDeMVC02.Web.Mapping
             .ForMember(dest => dest.CashPrice, opt => opt.MapFrom(src => src.Price * 0.9m))
             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Brand.ImageUrl))
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.BrandName));
-
-
         }
 
         private void LoadSizesMapping()

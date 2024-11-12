@@ -51,7 +51,12 @@ namespace TPdeEFCore01.Servicios.Servicios
 			return _repository!.GetAll(filter, orderBy, propertiesNames);
 		}
 
-		public bool ItsRelated(int id)
+		public List<int> GetAssignedSizeForShoe(Shoe shoe)
+		{
+			return _repository!.GetAssignedSizeForShoe(shoe);
+		}
+
+        public bool ItsRelated(int id)
 		{
 			return _repository!.ItsRelated(id);
 		}

@@ -1,4 +1,5 @@
 ﻿@model ShoeHomeDetailsVm
+
 <form method="post">
 
     <input type="hidden" asp-for="@Model.ShoeId" />
@@ -85,25 +86,57 @@
                             </div>
                         </div>
 
-
-                        <!-- Count Input -->
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
-                                    <input type="number" value="1" class="form-control text-end" min="1" aria-label="Quantity" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Add to Cart Button -->
                         <div class="row">
-                            <div class="col-12 col-md-6">
-                                <button type="submit" class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
-                                    Add to Cart
-                                </button>
+                            <div class="form-group col-6 py-2">
+                                <label asp-for="@Model.SizeId"></label>
+                                <select asp-for="@Model.SizeId" class="form-select" asp-items="Model.ListSize">
+                                    <option selected disabled>Select Size</option>
+                                </select>
                             </div>
+
+
                         </div>
+                        @if (!Model.Active)
+                        {
+                            if (Model.Stock> 0)
+                            {
+                                <!-- Count Input -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <span class="border-0 fw-semibold">Stock</span>
+                                            <input disabled class="form-control text-end" asp-for="@Model.Stock" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Count Input -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
+                                            <input asp-for="@Model.Stock" type="number" value="1"
+                                                   class="form-control text-end" min="1" max="@Model.Stock" aria-label="Stock" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Add to Cart Button -->
+                                <div class="row">
+                                    <div class="col-12 col-md-6">
+                                        <button type="submit" class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <span class="badge bg-danger text-white fw-bold fs-5">Out of Stock</span>
+                                </div>
+                            }
+                        }
+
                     </div>
                 </div>
             </div>

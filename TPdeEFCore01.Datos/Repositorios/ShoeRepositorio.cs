@@ -25,8 +25,13 @@ namespace TPdeEFCore01.Datos.Repositorios
             s.ColorId == shoe.ColorId && s.Model == shoe.Model && s.ShoeId != shoe.ShoeId);
         }
 
+		public List<int> GetAssignedSizeForShoe(Shoe shoe)
+		{
+            return _dbContext.ShoeSizes.Where(ss => ss.ShoeId == shoe.ShoeId)
+                                        .Select(ss => ss.SizeId).ToList();
+		}
 
-
+      
         public bool ItsRelated(int id)
         {
             return _dbContext.ShoeSizes.Any(s => s.ShoeId == id);
