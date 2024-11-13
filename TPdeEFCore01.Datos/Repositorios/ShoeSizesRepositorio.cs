@@ -33,7 +33,7 @@ namespace TPdeEFCore01.Datos.Repositorios
 			return _dbContext.ShoeSizes.Any(s => s.ShoeSizeId == id);
 		}
 
-		public void Update(ShoeSize shoeSizes)
+        public void Update(ShoeSize shoeSizes)
 		{
 			_dbContext.ShoeSizes.Update(shoeSizes);
 

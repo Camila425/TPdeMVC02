@@ -44,6 +44,21 @@ namespace TPDeMVC02.Web.Mapping
             .ForMember(dest => dest.CashPrice, opt => opt.MapFrom(src => src.Price * 0.9m))
             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Brand.ImageUrl))
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand.BrandName));
+            CreateMap<ShoeSize, EditStockShoeSize>()
+           .ForMember(dest => dest.SizeId, opt => opt.MapFrom(src => src.SizeId))
+           .ForMember(dest => dest.ShoeId, opt => opt.MapFrom(src => src.ShoeId))
+           .ForMember(dest => dest.StockActual, opt => opt.MapFrom(src => src.QuantityInStock))
+           .ForMember(dest => dest.StockNuevo, opt => opt.MapFrom(src => src.QuantityInStock)).ReverseMap();
+          
+           CreateMap<EditStockShoeSize, ShoeSize>()
+          .ForMember(dest => dest.SizeId, opt => opt.MapFrom(src => src.SizeId))
+          .ForMember(dest => dest.ShoeId, opt => opt.MapFrom(src => src.ShoeId))
+          .ForMember(dest => dest.QuantityInStock, opt => opt.MapFrom(src => src.StockActual))
+          .ForMember(dest => dest.QuantityInStock, opt => opt.MapFrom(src => src.StockNuevo))
+          .ForMember(dest => dest.shoe, opt => opt.Ignore())
+          .ForMember(dest => dest.shoe, opt => opt.Ignore());
+
+
         }
 
         private void LoadSizesMapping()

@@ -114,7 +114,7 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             return View(ShoeFilterVm);
         }
 
-        public IActionResult UpSert(int? id, string? returnUrl=null)
+        public IActionResult UpSert(int? id, string? returnUrl = null)
         {
             ShoeEditVm shoeEditVm;
             if (id == null || id == 0)
@@ -144,7 +144,8 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                 }
                 catch (Exception)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the record");
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        "An error occurred while retrieving the record");
                 }
             }
             return View(shoeEditVm);
@@ -349,5 +350,55 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             shoeAssignSizesVm.AvailableSizes = GetSizesWithStocks(shoeAssignSizesVm.ShoeId);
             return View(shoeAssignSizesVm);
         }
+        public ActionResult EditStock(int? ShoeId, int? sizeId)
+        {
+            EditStockShoeSize editStockShoeSize;
+            if (ShoeId == null || sizeId == 0)
+            {
+                editStockShoeSize = new EditStockShoeSize();
+            }
+            var shoesize = _shoeSizesServicio!.GetAll(filter: ss => ss.ShoeId == ShoeId && ss.SizeId == sizeId,
+            propertiesNames: "shoe,size")!
+                 .Select(ss => new EditStockShoeSize
+                 {
+                     SizeId = ss.SizeId,
+                     ShoeId = ss.ShoeId,
+                     StockActual = ss.QuantityInStock,
+                 }).FirstOrDefault();
+            if (shoesize == null)
+            {
+                TempData["ERROR"] = "Shoe Size Not Found";
+                return RedirectToAction("AssignSizes");
+            }
+            editStockShoeSize = _mapper!.Map<EditStockShoeSize>(shoesize);
+
+            return View(editStockShoeSize);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditStock(EditStockShoeSize editStockShoeSize)
+        {
+            if (ModelState.IsValid)
+            {
+                var shoeSize = _shoeSizesServicio!.GetAll
+                    (filter: ss => ss.ShoeId == editStockShoeSize.ShoeId && ss.SizeId == editStockShoeSize.SizeId,
+                    propertiesNames: "shoe,size")!
+                    .FirstOrDefault();
+
+                var StockSize = _mapper!.Map<ShoeSize>(editStockShoeSize);
+                if (shoeSize == null)
+                {
+                    TempData["ERROR"] = "Shoe Size Not Found";
+                    return RedirectToAction("AssignSizes");
+                }
+                shoeSize.QuantityInStock = editStockShoeSize.StockNuevo;
+                _shoeSizesServicio.Save(shoeSize);
+                TempData["Success"] = "Update Stock";
+
+            }
+            return View(editStockShoeSize);
+        }
+
     }
 }

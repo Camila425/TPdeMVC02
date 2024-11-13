@@ -16,6 +16,5 @@ namespace TPdeEFCore01.Servicios.Interfaces
 		bool Exist(ShoeSize shoeSize);
 		bool ItsRelated(int id);
 		void AssignSizesAndStockToShoe(ShoeSizeDto shoeSizeDto);
-       
     }
 }

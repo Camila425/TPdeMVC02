@@ -8,5 +8,5 @@ namespace TPdeEFCore01.Datos.Interfaces
 		bool Exist(ShoeSize shoeSizes);
 		bool ItsRelated(int id);
 		void AssignSizesAndStockToShoe(ShoeSize shoeSizes);
-	}
+    }
 }

@@ -105,7 +105,5 @@ namespace TPdeEFCore01.Servicios.Servicios
 		{
 			return shoeSizesRepositorio?.Get(filter,propertiesNames,tracked);
 		}
-
-       
     }
 }

@@ -3,43 +3,42 @@
     ViewData["Title"] = "Assign Sizes to Shoe";
 }
 
-<h2>Assign Sizes to Shoe</h2>
-
 <form asp-action="AssignSizes" method="post">
     <input type="hidden" asp-for="ShoeId" />
     <input type="hidden" asp-for="@Model.Model" />
 
-    <div class="form-group row mb-3">
-        <div class="col-4">
-            <label for="NewSizeId">Add New Size</label>
-            <select class="form-control" asp-for="NewSizeId" asp-items="Model.AllSizes">
-                <option value="">Select a Size</option>
-            </select>
-
-        </div>
-        <div class="col-4">
-            <div class="form-group">
-                <label for="NewStock">New Stock:</label>
-                <input class="form-control" type="number" step="0" asp-for="NewStock" />
-            </div>
-
-        </div>
-    </div>
-
-    <div class="form-group m-3">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a class="btn btn-success" asp-action="Index">Back to List</a>
-
-    </div>
     <table class="table table-bordered mt-3">
         <thead>
             <tr>
-                <th>SizeNumber</th>
-                <th>Stock</th>
-
+                <th colspan="3" class="text-center fs-4">Assign Sizes to Shoe</th>
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td colspan="3" class="align-middle">
+                    <div class="d-flex align-items-end">
+                        <div class="me-3" style="width: 25%;">
+                            <label for="NewSizeId" class="form-label">Add New Size:</label>
+                            <select class="form-control mt-1" asp-for="NewSizeId" asp-items="Model.AllSizes">
+                                <option value="">Select a Size</option>
+                            </select>
+                        </div>
+                        <div class="me-3" style="width: 25%;">
+                            <label for="NewStock" class="form-label">New Stock:</label>
+                            <input class="form-control mt-1" type="number" min="0" asp-for="NewStock" />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary me-2">Save</button>
+                            <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="width: 25%;">Size Number</th>
+                <th style="width: 25%;">Stock</th>
+                <th style="width: 20%;">Actions</th>
+            </tr>
             @if (Model.AvailableSizes.Any())
             {
                 foreach (var size in Model.AvailableSizes)
@@ -47,19 +46,29 @@
                     <tr>
                         <td>@size.SizeNumber</td>
                         <td>@size.Stock</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a asp-controller="Shoes" asp-action="EditStock" asp-route-ShoeId="@Model.ShoeId"
+                                   asp-route-sizeId="@size.SizeId"
+                                class="btn btn-warning ">
+                                    <i class="bi bi-pencil-fill"></i>
+                                    EditStock
+                                </a>    
+                                
+                            </div>
+                            <button type="button" class="btn btn-sm btn-danger btn-lg">Delete</button>
+                        </td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td style="text-align:center" class="text-danger fw-bold" colspan="2">
-                        No Sizes have been added yet
+                    <td colspan="3" class="text-center text-danger fw-bold">
+                        No sizes have been added yet.
                     </td>
                 </tr>
             }
-
         </tbody>
     </table>
 </form>
-
