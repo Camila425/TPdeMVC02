@@ -3,11 +3,11 @@
 @using X.Web.PagedList
 @{
     ViewData["Title"] = "Zapateria";
-    string ShrinkShoeDescripcion(string Descripcion)
+    string ShrinkShoeModel(string model)
     {
-        return Descripcion.Length >= 20 ? $"{Descripcion.Substring(0, 15)}..." : Descripcion;
+        return model.Length >= 20 ? $"{model.Substring(0, 15)}..." : model;
     }
- }
+}
 <div class="row">
     @foreach (var shoe in Model)
     {
@@ -15,13 +15,12 @@
             <div class="row p-2">
                 <div class="col-12 p1">
                     <div class="card border-0 p-3 shadow border-top border-5 rounded">
-                        <img src="@(string.IsNullOrEmpty(shoe.Brand)?"/images/SinImagenDisponible.jpg":shoe.Brand)" 
-                        class="card-img-top d-block mx-auto" alt="..." style="width: 150px; height: 90px; object-fit: cover;">
+                        <img src="@(string.IsNullOrEmpty(shoe.ImageUrl)
+                           ? "/images/SinImagenDisponible.jpg" : shoe.ImageUrl)"
+                             class="card-img-top d-block mx-auto" alt="..." style="width: 270px; height: 300px; object-fit: cover;">
                         <div class="card-body pb-0">
                             <div class="pl-1">
-                                <p class="card-text text-center h5 text-dark opacity-75">@ShrinkShoeDescripcion(shoe.Description)</p>
-                                <p class="card-text text-center text-dark">@shoe.Model</p>
-
+                                <p class="card-text text-center text-dark">@ShrinkShoeModel(shoe.Model)</p>
                             </div>
                             @if (shoe.Active)
                             {
@@ -34,41 +33,28 @@
                                 <p class="text-center">
                                     <span class="badge bg-danger">Inactivo</span>
                                 </p>
-
                             }
                             <div class="pl-1">
-                                <p class="text-dark text-center opacity-75 mb-0">
-                                    List Price:
-                                    $<span class="text-decoration-line-through">@shoe.ListPrice</span>
-                                </p>
-
-                            </div>
-                            <div class="pl-1">
                                 <p class="text-dark text-center opacity-75">
-                                    As Low As:
-                                    $<span>@shoe.CashPrice.ToString("N2")</span>
+                                    <label class="fw-bold">Base Price:</label> $<span>@shoe.ListPrice.ToString("N2")</span>
                                 </p>
-
                             </div>
-
                         </div>
                         <div>
                             <a class="btn btn-secondary bg-gradient form-control"
                                asp-action="Details"
                                asp-route-id="@shoe.ShoeId"
-                               asp-route-returnUrl="@Url.Action("Index",new{page=Model.PageNumber})">
+                               asp-route-sizeId="@shoe.SizeId"
+                               asp-route-ColorId="@shoe.ColorId"
+                               asp-route-returnUrl="@Url.Action("Index", new { page = Model.PageNumber })">
                                 Details
                             </a>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
-
     }
     <partial name="Pager" model="@Model" />
 </div>
-
- 
-

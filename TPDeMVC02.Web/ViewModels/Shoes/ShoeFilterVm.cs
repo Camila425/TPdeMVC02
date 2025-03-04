@@ -7,7 +7,6 @@ namespace TPDeMVC02.Web.ViewModels.Shoes
     {
         public IPagedList<ShoeListVm>? Shoes { get; set; }
         public List<SelectListItem>? Brands { get; set; }
-		public List<SelectListItem>? Colors { get; set; }
 
 
 	}

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPdeEFCore01.Entidades;
 using TPdeEFCore01.Servicios.Interfaces;
@@ -8,6 +9,7 @@ using X.PagedList.Extensions;
 namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SportsController : Controller
     {
         private readonly ISportServicio? _sportServicio;

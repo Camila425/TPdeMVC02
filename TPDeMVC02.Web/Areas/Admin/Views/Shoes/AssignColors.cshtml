@@ -1,0 +1,69 @@
+﻿@model ShoeAssignColorsVm
+
+@{
+    ViewData["Title"] = "Assign Colors to Shoe";
+}
+
+<h2>Assign Colors to Shoe</h2>
+
+<div>
+    <h3>@Model.Model</h3>
+    <p>Base Price: $@Model.BasePrice.ToString("N2")</p>
+</div>
+
+<form asp-action="AssignColors" method="post">
+    <input type="hidden" asp-for="ShoeId" />
+    <input type="hidden" asp-for="@Model.Model" />
+
+    <div class="form-group row mb-3">
+        <div class="col-4">
+            <label for="NewColourId">Add New Colour</label>
+            <select class="form-control" asp-for="NewColorId" asp-items="Model.AllColors">
+                <option value="">Select a colour</option>
+            </select>
+
+        </div>
+        <div class="col-4">
+            <div class="form-group">
+                <label for="NewColourPrice">New Colour Price:</label>
+                <input class="form-control" type="number" step="0.01" asp-for="NewColorPrice" />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group m-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="btn btn-success" asp-action="Index">Back to List</a>
+
+    </div>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Color</th>
+                <th>Price</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.AvailableColors.Any())
+            {
+                foreach (var color in Model.AvailableColors)
+                {
+                    <tr>
+                        <td>@color.ColorName</td>
+                        <td>@color.Price.ToString("C2")</td>
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr>
+                    <td style="text-align:center" class="text-danger fw-bold" colspan="2">No colors have been added yet</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</form>

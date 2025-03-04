@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TPdeEFCore01.Entidades;
@@ -10,6 +11,7 @@ using X.PagedList.Extensions;
 namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ShoesController : Controller
     {
         private readonly IShoeServicio? _shoeServicio;
@@ -19,14 +21,21 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
         private readonly IColorServicio? _colorServicio;
         private readonly IShoeSizesServicio? _shoeSizesServicio;
         private readonly ISizeServicio? _sizeServicio;
+        private readonly IShoeImagesServicio? _shoeImagesServicio;
+		private readonly IShoeColorsServicio? _shoeColorsServicio;
 
-        private readonly IMapper? _mapper;
+		private readonly IMapper? _mapper;
+        private readonly IWebHostEnvironment? _webHostEnvironment;
+
 
         public ShoesController(IShoeServicio? shoeServicio, IBrandServicio brandService, ISportServicio sportServicio,
             IGenreServicio genreServicio, IColorServicio colorServicio,
             IShoeSizesServicio? shoeSizesServicio,
             ISizeServicio? sizeServicio,
-            IMapper? mapper)
+            IShoeImagesServicio? shoeImagesServicio,
+            IWebHostEnvironment webHostEnvironment,
+			IShoeColorsServicio? shoeColorsServicio,
+			IMapper? mapper)
         {
             _shoeServicio = shoeServicio ?? throw new ApplicationException("Dependencies not set");
             _brandService = brandService ?? throw new ApplicationException("Dependencies not set");
@@ -35,23 +44,24 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             _colorServicio = colorServicio ?? throw new ApplicationException("Dependencies not set");
             _shoeSizesServicio = shoeSizesServicio ?? throw new ApplicationException("Dependencies not set");
             _sizeServicio = sizeServicio ?? throw new ApplicationException("Dependencies not set");
+            _shoeImagesServicio = shoeImagesServicio ?? throw new ApplicationException("Dependencies not set");
+			_shoeColorsServicio = shoeColorsServicio ?? throw new ApplicationException("Dependencies not set");
+			_webHostEnvironment = webHostEnvironment;
             _mapper = mapper;
         }
-        public IActionResult Index(int? page, int? filterBrandId, int? filterColorId,
-            int pageSize = 10, bool viewAll = false, string orderBy = "Description")
+        public IActionResult Index(int? page, int? filterBrandId,int pageSize = 10, 
+            bool viewAll = false, string orderBy = "Description")
         {
             int PageNumber = page ?? 1;
             ViewBag.currentPageSize = pageSize;
             ViewBag.currentOrderBy = orderBy;
 
             var Brands = _brandService!.GetAll(orderBy: o => o.OrderBy(b => b.BrandName))!.ToList();
-            var colors = _colorServicio!.GetAll(orderBy: o => o.OrderBy(c => c.ColorName))!.ToList();
             IEnumerable<Shoe>? shoes;
-
-            if (viewAll || filterBrandId is null && filterColorId is null)
+            if (viewAll || filterBrandId is null)
             {
                 shoes = _shoeServicio?.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-                    propertiesNames: "Brand,Sport,Genre,Color");
+                    propertiesNames: "Brand,Sport,Genre");
             }
             else
             {
@@ -59,18 +69,12 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                 {
                     shoes = _shoeServicio!.GetAll(orderBy: o => o.OrderBy(s => s.Description),
                         filter: b => b.BrandId == filterBrandId.Value,
-                        propertiesNames: "Brand,Sport,Genre,Color");
-                }
-                else if (filterColorId.HasValue)
-                {
-                    shoes = _shoeServicio!.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-                    filter: s => s.ColorId == filterColorId.Value,
-                    propertiesNames: "Brand,Sport,Genre,Color");
+                        propertiesNames: "Brand,Sport,Genre");
                 }
                 else
                 {
                     shoes = _shoeServicio?.GetAll(orderBy: o => o.OrderBy(s => s.Description),
-                        propertiesNames: "Brand,Sport,Genre,Color");
+                        propertiesNames: "Brand,Sport,Genre");
                 }
             }
 
@@ -88,10 +92,6 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             {
                 shoesVm = shoesVm!.OrderBy(s => s.Sport).ToList();
             }
-            if (orderBy == "Color")
-            {
-                shoesVm = shoesVm!.OrderBy(c => c.Color).ToList();
-            }
             if (orderBy == "Model")
             {
                 shoesVm = shoesVm!.OrderBy(s => s.Model).ToList();
@@ -105,11 +105,6 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                     Text = b.BrandName,
                     Value = b.BrandId.ToString()
                 }).ToList(),
-                Colors = colors.Select(c => new SelectListItem
-                {
-                    Text = c.ColorName,
-                    Value = c.ColorId.ToString()
-                }).ToList()
             };
             return View(ShoeFilterVm);
         }
@@ -123,22 +118,45 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                 shoeEditVm.Brands = GetBrands();
                 shoeEditVm.Genres = GetGenres();
                 shoeEditVm.Sports = GetSports();
-                shoeEditVm.Colors = GetColors();
             }
             else
             {
                 try
                 {
-                    Shoe? shoe = _shoeServicio!.Get(filter: s => s.ShoeId == id, propertiesNames: "Brand,Sport,Genre,Color");
+                    string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
+                    Shoe? shoe = _shoeServicio!.Get(filter: s => s.ShoeId == id,
+                        propertiesNames: "Brand,Sport,Genre,Images");
                     if (shoe == null)
                     {
                         return NotFound();
+                    }
+                    if (shoe.Images != null && shoe.Images.Any())
+                    {
+                        foreach (var image in shoe.Images)
+                        {
+                            if (!string.IsNullOrEmpty(image.ImageUrl))
+                            {
+                                var filePath = Path.Combine(wwwWebRoot, image.ImageUrl.TrimStart('/'));
+                                if (System.IO.File.Exists(filePath))
+                                {
+                                    ViewData["ImageExist"] = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (ViewData["ImageExist"] == null)
+                        {
+                            ViewData["ImageExist"] = false;
+                        }
+                    }
+                    else
+                    {
+                        ViewData["ImageExist"] = false;
                     }
                     shoeEditVm = _mapper!.Map<ShoeEditVm>(shoe);
                     shoeEditVm.Brands = GetBrands();
                     shoeEditVm.Genres = GetGenres();
                     shoeEditVm.Sports = GetSports();
-                    shoeEditVm.Colors = GetColors();
                     shoeEditVm.ReturnUrl = returnUrl;
                     return View(shoeEditVm);
                 }
@@ -150,18 +168,6 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             }
             return View(shoeEditVm);
         }
-
-        private List<SelectListItem> GetColors()
-        {
-            return _colorServicio!.GetAll(orderBy: o => o.OrderBy(c => c.ColorName))!
-           .Select(c => new SelectListItem
-           {
-               Text = c.ColorName,
-               Value = c.ColorId.ToString()
-
-           }).ToList();
-        }
-
         private List<SelectListItem> GetSports()
         {
             return _sportServicio!.GetAll(orderBy: o => o.OrderBy(s => s.SportName))!
@@ -198,54 +204,40 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpSert(ShoeEditVm shoeEditVm)
         {
-            string? returnUrl = shoeEditVm.ReturnUrl;
             if (!ModelState.IsValid)
             {
                 shoeEditVm.Brands = GetBrands();
                 shoeEditVm.Genres = GetGenres();
                 shoeEditVm.Sports = GetSports();
-                shoeEditVm.Colors = GetColors();
                 return View(shoeEditVm);
             }
+
             if (_shoeServicio == null || _mapper == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "Dependencies are not configured correctly");
             }
+
             try
             {
-                Shoe shoe = _mapper!.Map<Shoe>(shoeEditVm);
-                if (_shoeServicio!.Exist(shoe))
-                {
-                    ModelState.AddModelError(string.Empty, "Record already exist");
-                    shoeEditVm.Brands = GetBrands();
-                    shoeEditVm.Genres = GetGenres();
-                    shoeEditVm.Sports = GetSports();
-                    shoeEditVm.Colors = GetColors();
-                    return View(shoeEditVm);
-                }
-                _shoeServicio.Save(shoe);
+                string? wwwWebRoot = _webHostEnvironment!.WebRootPath;
+                Shoe shoe = _mapper.Map<Shoe>(shoeEditVm);
+
+                _shoeServicio.SaveShoeWithImages(shoe, shoeEditVm.ImageFiles, wwwWebRoot);
+
                 TempData["success"] = "Record successfully added/edited";
-                if (!string.IsNullOrEmpty(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-                else
-                {
-                    return RedirectToAction("Index");
-                }
+                return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "An error occurred while  record");
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 shoeEditVm.Brands = GetBrands();
                 shoeEditVm.Genres = GetGenres();
                 shoeEditVm.Sports = GetSports();
-                shoeEditVm.Colors = GetColors();
                 return View(shoeEditVm);
             }
-
         }
+
         [HttpDelete]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int? id)
@@ -332,7 +324,9 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                     SizeId = ss.SizeId,
                     SizeNumber = ss.size.SizeNumber,
                     Stock = ss.QuantityInStock,
-                    IsSelected = true
+                    StockInCarts=ss.StockInCarts,
+                    AvailableStock=ss.AvailableStock,
+                    IsSelected = true,
                 }).ToList();
             return AssignedSizes;
         }
@@ -343,13 +337,15 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var ShoeSizeDto = _mapper!.Map<ShoeSizeDto>(shoeAssignSizesVm);
-                _shoeSizesServicio!.AssignSizesAndStockToShoe(ShoeSizeDto);
-                return RedirectToAction("AssignSizes");
-            }
 
+                _shoeSizesServicio!.AssignSizesAndStockToShoe(ShoeSizeDto);
+
+                return RedirectToAction("AssignSizes", new { id = shoeAssignSizesVm.ShoeId });
+            }
             shoeAssignSizesVm.AvailableSizes = GetSizesWithStocks(shoeAssignSizesVm.ShoeId);
             return View(shoeAssignSizesVm);
         }
+
         public ActionResult EditStock(int? ShoeId, int? sizeId)
         {
             EditStockShoeSize editStockShoeSize;
@@ -376,29 +372,103 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult EditStock(EditStockShoeSize editStockShoeSize)
         {
             if (ModelState.IsValid)
             {
-                var shoeSize = _shoeSizesServicio!.GetAll
-                    (filter: ss => ss.ShoeId == editStockShoeSize.ShoeId && ss.SizeId == editStockShoeSize.SizeId,
+                var shoeSize = _shoeSizesServicio!.GetAll(
+                    filter: ss => ss.ShoeId == editStockShoeSize.ShoeId && ss.SizeId == editStockShoeSize.SizeId,
                     propertiesNames: "shoe,size")!
                     .FirstOrDefault();
 
-                var StockSize = _mapper!.Map<ShoeSize>(editStockShoeSize);
                 if (shoeSize == null)
                 {
                     TempData["ERROR"] = "Shoe Size Not Found";
                     return RedirectToAction("AssignSizes");
                 }
                 shoeSize.QuantityInStock = editStockShoeSize.StockNuevo;
-                _shoeSizesServicio.Save(shoeSize);
-                TempData["Success"] = "Update Stock";
 
+                shoeSize.AvailableStock = shoeSize.QuantityInStock - shoeSize.StockInCarts;
+
+                _shoeSizesServicio.Save(shoeSize);
+
+                TempData["success"] = "Record successfully added/edited";
             }
             return View(editStockShoeSize);
         }
+		public IActionResult AssignColors(int? id)
+		{
+			ShoeAssignColorsVm shoeVm;
 
-    }
+			if (id == null || id == 0)
+			{
+				return NotFound();
+			}
+			else
+			{
+				try
+				{
+					Shoe? shoe = _shoeServicio?.Get(filter: b => b.ShoeId == id);
+					if (shoe == null)
+					{
+						return NotFound();
+					}
+
+					shoeVm = _mapper!.Map<ShoeAssignColorsVm>(shoe);
+
+					shoeVm.AvailableColors = GetColorsWithPrices(shoe.ShoeId);
+
+					var assignedColorIds = shoeVm.AvailableColors.Select(c => c.ColorId).ToList();
+					shoeVm.AllColors = GetAllAvailableAndNotAssignedColours(shoeVm, assignedColorIds);
+				}
+				catch (Exception)
+				{
+					return StatusCode(StatusCodes.Status500InternalServerError,
+                        "An error occurred while retrieving the record.");
+				}
+			}
+
+			return View(shoeVm);
+		}
+		private IEnumerable<SelectListItem> GetAllAvailableAndNotAssignedColours
+		   (ShoeAssignColorsVm shoeVm, List<int> assignedColourIds)
+		{
+			return _colorServicio!.GetAll(filter: c => !assignedColourIds.Contains(c.ColorId))!
+				.Select(c => new SelectListItem
+				{
+					Value = c.ColorId.ToString(),
+					Text = c.ColorName
+				}).ToList();
+		}
+		public List<ShoeColorVm> GetColorsWithPrices(int shoeId)
+		{
+			var assignedColours = _shoeColorsServicio!.
+                GetAll(filter: sc => sc.ShoeId == shoeId, propertiesNames: "Color")!
+				.Select(sc => new ShoeColorVm
+				{
+					ColorId = sc.ColorId,
+					ColorName = sc.Color.ColorName,
+					Price = sc.PriceAdjustment,
+					IsSelected = true 
+				}).ToList();
+
+			return assignedColours;
+		}
+		[HttpPost]
+		public IActionResult AssignColors(ShoeAssignColorsVm shoeColorVm)
+		{
+			if (ModelState.IsValid)
+			{
+				var shoeColorDto = _mapper!.Map<ShoeColorDto>(shoeColorVm);
+
+
+				_shoeColorsServicio!.AssignColorsAndPricesToShoe(shoeColorDto);
+				return RedirectToAction("AssignColors");
+			}
+
+			shoeColorVm.AvailableColors = GetColorsWithPrices(shoeColorVm.ShoeId);
+			return View(shoeColorVm);
+		}
+
+	}
 }

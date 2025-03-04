@@ -18,30 +18,39 @@ namespace TPdeEFCore01.Servicios.Servicios
 			this.unitOfWork = unitOfWork;
 		}
 
-		public void AssignSizesAndStockToShoe(ShoeSizeDto shoeSizeDto)
-		{
-			try
-			{
-				unitOfWork?.BeginTransaction();
+        public void AssignSizesAndStockToShoe(ShoeSizeDto shoeSizeDto)
+        {
+            try
+            {
+                unitOfWork?.BeginTransaction();
+                var existingShoeSize = shoeSizesRepositorio?.GetShoeSizeId(shoeSizeDto.ShoeId, shoeSizeDto.SizeId);
 
-				ShoeSize shoeSizesToSave = new ShoeSize()
-				{
-					ShoeId = shoeSizeDto.ShoeId,
-					SizeId = shoeSizeDto.SizeId,
-					QuantityInStock = shoeSizeDto.Stock,
-				};
-				shoeSizesRepositorio?.Add(shoeSizesToSave);
-				unitOfWork?.Commit();
+                if (existingShoeSize != null)
+                {
+                    existingShoeSize.QuantityInStock += shoeSizeDto.Stock; 
+                    existingShoeSize.AvailableStock = existingShoeSize.QuantityInStock - existingShoeSize.StockInCarts;
+                }
+                else
+                {
+                    ShoeSize shoeSizesToSave = new ShoeSize()
+                    {
+                        ShoeId = shoeSizeDto.ShoeId,
+                        SizeId = shoeSizeDto.SizeId,
+                        QuantityInStock = shoeSizeDto.Stock,
+                        AvailableStock = shoeSizeDto.Stock
+                    };
+                    shoeSizesRepositorio?.Add(shoeSizesToSave);
+                }
+                unitOfWork?.Commit();
+            }
+            catch (Exception)
+            {
+                unitOfWork?.Rollback();
+                throw;
+            }
+        }
 
-			}
-			catch (Exception)
-			{
-				unitOfWork?.Rollback();
-				throw;
-			}
-		}
-
-		public bool Exist(ShoeSize shoeSizes)
+        public bool Exist(ShoeSize shoeSizes)
 		{
 			return shoeSizesRepositorio!.Exist(shoeSizes);
 
@@ -53,9 +62,7 @@ namespace TPdeEFCore01.Servicios.Servicios
 		{
 			return shoeSizesRepositorio?.GetAll(filter,orderBy,propertiesNames);
 		}
-
 	
-
 		public bool ItsRelated(int id)
 		{
 			return shoeSizesRepositorio!.ItsRelated(id);
@@ -105,5 +112,11 @@ namespace TPdeEFCore01.Servicios.Servicios
 		{
 			return shoeSizesRepositorio?.Get(filter,propertiesNames,tracked);
 		}
+
+        public ShoeSize GetShoeSizeId(int? ShoeId, int? SizeId)
+        {
+			return shoeSizesRepositorio!.GetShoeSizeId(ShoeId,SizeId);
+        }
+
     }
 }

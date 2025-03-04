@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPdeEFCore01.Entidades;
 using TPdeEFCore01.Servicios.Interfaces;
@@ -9,6 +10,7 @@ using X.PagedList.Extensions;
 namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class BrandsController : Controller
     {
         private readonly IBrandServicio? _BrandService;
@@ -92,7 +94,6 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
                     else
                     {
                         ViewData["ImageExist"] = false;
-
                     }
                     brandEditVm = _mapper.Map<BrandEditVm>(brand);
                     return View(brandEditVm);
@@ -231,10 +232,12 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
 
             BrandDetailsVm brandDetails = _mapper!.Map<BrandDetailsVm>(brand);
             brandDetails.ShoesQuantity = GetShoeQuantity(brandDetails.BrandId);
+
             var shoes = _shoeServicio!.GetAll(
                 orderBy: o => o.OrderBy(s => s.Description),
                 filter: b => b.BrandId == brandDetails.BrandId,
-                propertiesNames: "Brand,Sport,Genre,Color");
+                propertiesNames: "Brand,Sport,Genre,ShoeColors");
+
             brandDetails.ShoesListVm = _mapper!.Map<List<ShoeListVm>>(shoes).ToPagedList(currentPage, pageSize);
 
             return View(brandDetails);

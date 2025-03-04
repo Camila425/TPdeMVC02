@@ -10,6 +10,9 @@
         public decimal CashPrice { get; set; }
         public bool Active { get; set; }
         public string? ImageUrl { get; set; }
+        public int SizeId { get; set; }
+        public int ColorId { get; set; }
+        public decimal Stock { get; set; }
 
 
     }

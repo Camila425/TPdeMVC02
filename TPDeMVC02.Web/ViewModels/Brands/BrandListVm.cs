@@ -9,7 +9,7 @@ namespace TPDeMVC02.Web.ViewModels.Brands
 		public string BrandName { get; set; } = null!;
 		public bool Active { get; set; } = true;
 		[DisplayName("Shoe Quantity")]
-
+		public string? ImageUrl { get; set; }
 		public int ShoesQuantity { get; set; }
 	}
 }

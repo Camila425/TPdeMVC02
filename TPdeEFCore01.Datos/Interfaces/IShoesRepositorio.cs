@@ -8,5 +8,7 @@ namespace TPdeEFCore01.Datos.Interfaces
 		bool Exist(Shoe shoe);
 		bool ItsRelated(int id);
 		List<int> GetAssignedSizeForShoe(Shoe shoe);
+		Shoe? GetShoeId(int shoeId);
+        List<int> GetAssignedColorsForShoe(Shoe shoe);
     }
 }

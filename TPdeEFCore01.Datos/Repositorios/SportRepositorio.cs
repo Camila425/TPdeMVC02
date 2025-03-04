@@ -24,7 +24,6 @@ namespace TPdeEFCore01.Datos.Repositorios
         public bool ItsRelated(int id)
         {
             return _dbContext.shoes.Any(s => s.SportId == id);
-
         }
 
         public void Update(Sport sport)

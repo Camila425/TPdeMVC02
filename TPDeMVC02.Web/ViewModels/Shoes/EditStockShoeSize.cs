@@ -6,5 +6,6 @@
         public int ShoeId { get; set; }
         public int StockActual { get; set; }
         public int StockNuevo { get; set; }
+        public int AvailableStock { get; set; }
     }
 }

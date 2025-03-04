@@ -1,129 +1,178 @@
-﻿@model ShoeHomeDetailsVm
+﻿@model ShoppingCartDetailVm
 
 <form method="post">
-
-    <input type="hidden" asp-for="@Model.ShoeId" />
+    <input type="hidden" asp-for="ShoeId" />
+    <input type="hidden" id="ShoeIdHidden" value="@Model.shoeHomeDetailsVm.ShoeId" />
     <div class="card shadow border-0 mt-4">
-        <div class="card-header bg-secondary bg-gradient text-light py-4">
+        <div class="card-header bg-light text-dark py-2">
             <div class="row">
                 <div class="col-12 text-center">
-                    <h3 class="text-white text-uppercase">@Model.Description</h3>
-                    <p class="text-white-50 fw-semibold mb-0">Brand: <span class="text-uppercase text-white fw-bold">@Model.Brand</span> </p>
+                    <h3 class="text-dark text-uppercase">@Model.shoeSize.shoe.Description</h3>
+                    <p class="text-dark-50 fw-semibold mb-0">
+                        Brand: <span class="text-uppercase text-dark fw-bold">@Model.shoeSize.shoe.Brand.BrandName</span>
+                    </p>
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="py-3">
-                <div class="row">
-                    <div class="col-6 col-md-2 offset-lg-1 pb-1">
-                        <a href="@(ViewBag.ReturnUrl??Url.Action("Index","Home",new{area="Customer"}))"
-                           class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
-                            <small>Back to List</small>
-                        </a>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a href="@(ViewBag.ReturnUrl ?? Url.Action("Index", "Home", new { area = "Customer" }))"
+                               class="btn btn-outline-primary bg-gradient fw-semibold btn-sm text-uppercase">
+                                <small>Back to List</small>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
-                        <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/SinImagenDisponible.jpg" : Model.ImageUrl)"
-                             class="d-block mx-auto img-fluid rounded shadow"
-                             style="width:300px; height:300px; object-fit:contain;"
-                             alt="@Model.Model" />
-                    </div>
-
-                    <div class="col-12 col-lg-6 offset-lg-1">
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <span class="badge bg-secondary text-white fw-bold text-uppercase fs-5">@Model.Brand</span>
-                            </div>
-                            @if (Model.Active)
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            @if (Model.shoeSize.shoe.Images != null && Model.shoeSize.shoe.Images.Any())
                             {
-                                <div class="col-6 mb-3">
-                                    <span class="badge bg-primary text-white fw-bold fs-5 ">Active</span>
+                                <div id="shoeCarousel" class="carousel slide" data-bs-ride="carousel"
+                                     style="max-width: 800px; height: 400px; margin: 0 auto;">
+                                    <div class="carousel-inner" style="height: 100%;">
+                                        @foreach (var image in Model.shoeSize.shoe.Images.Select((img, index) => new { img, index }))
+                                        {
+                                            <div class="carousel-item @(image.index == 0 ? "active" : "")" style="height: 100%;">
+                                                <img src="@image.img.ImageUrl" class="d-block w-100" alt="Image @image.index"
+                                                     style="height: 100%; width: 100%; object-fit: contain;">
+                                            </div>
+                                        }
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#shoeCarousel"
+                                            data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#shoeCarousel"
+                                            data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
                                 </div>
                             }
                             else
                             {
-                                <div class="col-6 mb-3">
-                                    <span class="badge bg-danger text-white fw-bold fs-5">Inactivo</span>
+                                <img src="/images/SinImagenDisponible.jpg" style="width:400px; height:300px; border:1px solid" />
+                            }
+                        </div>
+                        <div class="col-6 col-lg-6 offset-lg-1">
+                            <div class="row align-items-center mb-3">
+                                <div class="col-auto">
+                                    <h6 class="text-black m-0">
+                                        <span style="font-size: 2rem; font-weight: bold;">
+                                            <label class="fw-bold">Base Price:</label> $<span id="ShoePrice">@Model.shoeHomeDetailsVm.ListPrice.ToString("N2")</span>
+                                        </span>
+                                    </h6>
                                 </div>
 
-                            }
 
-                        </div>
-
-                        <div class="row">
-                            <h6 class="text-dark text-opacity-50 pb-2 ps-2">
-                                List Price:
-                                <span class="text-decoration-line-through">
-                                    $@Model.ListPrice.ToString("N2")
-                                </span>
-                            </h6>
-                        </div>
-
-                        <!-- Quantity and more -->
-                        <div class="row text-center mb-2">
-                            <div class="col-4 col-lg-2">
-                                <div class="bg-light py-2 border-bottom fw-semibold">Quantity</div>
-                            </div>
-                            <div class="col-4 col-lg-2">
-                                <div class="bg-light py-2 border-bottom fw-semibold">1</div>
-                            </div>
-                            <div class="col-4 col-lg-2">
-                                <div class="bg-light py-2 border-bottom fw-semibold">More</div>
-                            </div>
-                        </div>
-
-                        <!-- Prices -->
-                        <div class="row text-center mb-2">
-                            <div class="col-4 col-lg-2">
-                                <div class="bg-light py-2 text-warning fw-bold">Prices</div>
-                            </div>
-                            <div class="col-4 col-lg-2">
-                                <div class="bg-light py-2 text-warning fw-bold">$@Model.ListPrice.ToString("N2")</div>
-                            </div>
-                            <div class="col-4 col-lg-2">
-                                <div class="bg-light py-2 text-warning fw-bold">$@Model.CashPrice.ToString("N2")</div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="form-group col-6 py-2">
-                                <label asp-for="@Model.SizeId"></label>
-                                <select asp-for="@Model.SizeId" class="form-select" asp-items="Model.ListSize">
-                                    <option selected disabled>Select Size</option>
-                                </select>
+                                <div class="col-auto">
+                                    @if (Model.shoeSize.shoe.Active)
+                                    {
+                                        <span class="badge bg-primary text-white fw-bold fs-5">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-white fw-bold fs-5">Inactivo</span>
+                                    }
+                                </div>
                             </div>
 
+                            <!-- Quantity and more -->
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-lg-4 mb-2">
+                                    <div class="bg-light py-2 border-bottom fw-semibold w-100" style="font-size: 1.2rem;">Quantity</div>
+                                </div>
+                                <div class="col-12 col-lg-4 mb-2">
+                                    <div class="bg-light py-2 border-bottom fw-semibold w-100" style="font-size: 1.2rem;">1</div>
+                                </div>
+                                <div class="col-12 col-lg-4 mb-2">
+                                    <div class="bg-light py-2 border-bottom fw-semibold w-100" style="font-size: 1.2rem;">More</div>
+                                </div>
+                            </div>
 
-                        </div>
-                        @if (!Model.Active)
-                        {
-                            if (Model.Stock> 0)
+                            <!-- Prices -->
+                            <div class="row text-center mb-3">
+                                <div class="col-12 col-lg-4 mb-2">
+                                    <div class="bg-light py-2 text-warning fw-bold w-100" style="font-size: 1.2rem;">Prices</div>
+                                </div>
+                                <div class="col-12 col-lg-4 mb-2">
+                                    <div class="bg-light py-2 text-warning fw-bold w-100" style="font-size: 1.2rem;">
+                                        $<span id="ShoePriceDisplay">@Model.shoeHomeDetailsVm.ListPrice.ToString("N2")</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-4 mb-2">
+                                    <div class="bg-light py-2 text-warning fw-bold w-100" style="font-size: 1.2rem;">
+                                        $<span id="ShoeCashPriceDisplay">@Model.shoeHomeDetailsVm.CashPrice.ToString("N2")</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.shoeSize.shoe.Active)
                             {
-                                <!-- Count Input -->
+
                                 <div class="row mb-3">
                                     <div class="col-md-6">
+                                        <label for="ColorId" class="fw-semibold me-3">Colors</label>
+                                        <select id="ColorId" name="ColorId" class="form-control" onchange="updateColorSelection(this)">
+                                            <option value="" selected disabled>Select Color</option> 
+                                            @if (Model.shoeHomeDetailsVm?.ListColor != null)
+                                            {
+                                                @foreach (var color in Model.shoeHomeDetailsVm.ListColor)
+                                                {
+                                                    <option value="@color.ColorId">
+                                                        @color.Color.ColorName
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                 
+                                    <div class="col-md-6">
+                                        <label for="SizeId" class="fw-semibold me-3">Sizes</label>
+                                        <select id="SizeId" name="SizeId" class="form-select w-100" onchange="updateStock()">
+                                            <option value="" selected disabled>Select Size</option>
+
+                                            @foreach (var size in Model.shoeHomeDetailsVm!.ListSizewithStock!)
+                                            {
+                                                <option value="@size.SizeId" data-stock="@size.AvailableStock">
+                                                    @size.SizeNumber
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+
+                                    <div class="col-md-6 col-12" id="StockContainer">
+                                        <div class="d-flex align-items-center">
+                                            <label for="Stock" class="fw-semibold me-3">Stock</label>
+                                            <input id="Stock" class="form-control w-100" name="Stock"
+                                                   value="@Model.shoeHomeDetailsVm.AvailableStock" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-12" id="CountContainer">
                                         <div class="input-group">
-                                            <span class="border-0 fw-semibold">Stock</span>
-                                            <input disabled class="form-control text-end" asp-for="@Model.Stock" />
+                                            <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
+                                            <input id="Quantity" asp-for="Quantity" type="number" value="1"
+                                                   class="form-control text-end" min="1"
+                                                   max="@Model.shoeHomeDetailsVm.AvailableStock" aria-label="Quantity" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mt-2">
+                                        <div id="StockMessage" class="text-danger fw-semibold" style="display: none;">
+                                            ❌ Sin stock disponible
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Count Input -->
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-primary text-white border-0 fw-semibold">Count</span>
-                                            <input asp-for="@Model.Stock" type="number" value="1"
-                                                   class="form-control text-end" min="1" max="@Model.Stock" aria-label="Stock" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Add to Cart Button -->
-                                <div class="row">
-                                    <div class="col-12 col-md-6">
-                                        <button type="submit" class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-dark w-100 px-5 py-2 text-uppercase fw-semibold">
+                                            <i class="bi bi-cart-plus-fill"></i>
                                             Add to Cart
                                         </button>
                                     </div>
@@ -135,11 +184,15 @@
                                     <span class="badge bg-danger text-white fw-bold fs-5">Out of Stock</span>
                                 </div>
                             }
-                        }
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </form>
+
+@section Scripts {
+    <script src="~/js/SizeWithStock.js"></script>
+    <script src="~/js/pricepercolor.js"></script>
+}

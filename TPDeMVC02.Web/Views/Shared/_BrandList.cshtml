@@ -4,9 +4,10 @@
 <table class="table table-bordered table-hover mt-3">
 	<thead>
 		<tr>
-			<th class="col-5">Brand Name</th>
+			<th class="col-1">Image</th>
+			<th class="col-2">Brand Name</th>
 			<th class="col-2">ShoesQuantity</th>
-			<th class="col-3">Acciones</th>
+			<th class="col-2">Acciones</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -15,6 +16,25 @@
 			foreach (var item in Model)
 			{
 				<tr id="@item.BrandId">
+					<td>
+						@if (string.IsNullOrEmpty(item.ImageUrl))
+						{
+							<img src="/images/SinImagenDisponible.jpg" class="img-thumbnail img-index" />
+						}
+						else
+						{
+							<img src="@item.ImageUrl" class="img-thumbnail img-index" />
+						}
+					</td>
+					<head>
+						<style>
+							.img-index {
+								width: 100px;
+								height: 50px;
+								object-fit: cover;
+							}
+						</style>
+					</head>
 					<td>@item.BrandName</td>
 					<td style="text-align:right">@item.ShoesQuantity</td>
 
@@ -46,3 +66,4 @@
 		}
 	</tbody>
 </table>
+

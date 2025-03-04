@@ -23,7 +23,7 @@ namespace TPdeEFCore01.Datos.Repositorios
 
 		public bool ItsRelated(int id)
 		{
-			return _dbContext.shoes.Any(c => c.ColorId == id);
+			return _dbContext.ShoeColors.Any(c => c.ColorId == id);
 		}
 
 		public void Update(Color color)

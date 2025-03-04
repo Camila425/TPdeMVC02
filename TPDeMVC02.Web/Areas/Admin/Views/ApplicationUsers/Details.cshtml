@@ -1,0 +1,95 @@
+﻿@model ApplicationUser
+
+<div class="container mt-4">
+    <h4>Customer Details</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.FirstName)</th>
+                        <td>@Html.DisplayFor(model => model.FirstName)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.LastName)</th>
+                        <td>@Html.DisplayFor(model => model.LastName)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.Address)</th>
+                        <td>@Html.DisplayFor(model => model.Address)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.Phone)</th>
+                        <td>@Html.DisplayFor(model => model.Phone)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.Country)</th>
+                        <td>@Html.DisplayFor(model => model.Country.CountryName)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.State)</th>
+                        <td>@Html.DisplayFor(model => model.State.StateName)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.City)</th>
+                        <td>@Html.DisplayFor(model => model.City.CityName)</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">@Html.DisplayNameFor(model => model.ZipCode)</th>
+                        <td>@Html.DisplayFor(model => model.ZipCode)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            <i class="bi bi-backspace"></i>&nbsp; Back to List
+        </a>
+    </div>
+
+    <div class="mt-4">
+        <h5>Order List</h5>
+        <table id="salesTable" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th style="width:10%">Order No.</th>
+                    <th style="width:15%">Order Date</th>
+                    <th style="width:15%">Shipping Date</th>
+                    <th style="width:10%">Order Total</th>
+                    <th style="width:10%">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderHeaders)
+                {
+                    <tr id="@item.OrderHeaderId">
+                        <td>@item.OrderHeaderId</td>
+                        <td>@item.OrderDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.ShippingDate.ToString("yyyy-MM-dd")</td>
+                        <td>@item.OrderTotal</td>
+                        <td>
+                            <a class="btn btn-info"
+                               asp-area="Customer"
+                               asp-controller="Orders"
+                               asp-action="Details"
+                               asp-route-id="@item.OrderHeaderId">
+                                <i class="bi bi-card-list"></i> Details
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

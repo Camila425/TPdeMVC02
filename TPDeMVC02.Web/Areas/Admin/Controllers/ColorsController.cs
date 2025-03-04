@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPdeEFCore01.Entidades;
 using TPdeEFCore01.Servicios.Interfaces;
@@ -9,17 +10,21 @@ using X.PagedList.Extensions;
 namespace TPDeMVC02.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ColorsController : Controller
     {
         private readonly IColorServicio? _colorServicio;
         private readonly IShoeServicio? _shoeServicio;
+        private readonly IShoeColorsServicio? _shoeColorsServicio;
 
         private readonly IMapper? _mapper;
 
-        public ColorsController(IColorServicio? ColorServicio, IShoeServicio? shoeServicio, IMapper? mapper)
+        public ColorsController(IColorServicio? ColorServicio, IShoeServicio? shoeServicio,
+            IShoeColorsServicio? shoeColorsServicio, IMapper? mapper)
         {
             _colorServicio = ColorServicio ?? throw new ApplicationException("dependencies not set");
             _shoeServicio = shoeServicio ?? throw new ApplicationException("dependencies not set");
+            _shoeColorsServicio = shoeColorsServicio ?? throw new ApplicationException("dependencies not set");
             _mapper = mapper ?? throw new ApplicationException("dependencies not set");
         }
         public IActionResult Index(int? page, string? searchTerm = null, bool viewAll = false, int pageSize = 10)
@@ -55,7 +60,7 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
 
         private int GetShoeQuantity(int colorId)
         {
-            return _shoeServicio!.GetAll(filter: c => c.ColorId == colorId)!.Count();
+            return _shoeColorsServicio!.GetAll(filter: c => c.ColorId == colorId)!.Count();
         }
 
         public IActionResult UpSert(int? id)
@@ -174,11 +179,13 @@ namespace TPDeMVC02.Web.Areas.Admin.Controllers
             int pageSize = 10;
 
             ColorDetailsVm colorDetails = _mapper!.Map<ColorDetailsVm>(color);
+
             colorDetails.ShoesQuantity = GetShoeQuantity(colorDetails.ColorId);
-            var shoes = _shoeServicio!.GetAll(
-                orderBy: o => o.OrderBy(s => s.Description),
-                filter: c => c.ColorId == colorDetails.ColorId,
-                propertiesNames: "Brand,Sport,Genre,Color");
+
+            var shoes = _shoeColorsServicio!.GetAll(
+                orderBy: o => o.OrderBy(s => s.Shoe.Description),
+                filter: sc => sc.ColorId == colorDetails.ColorId,
+                propertiesNames: "Shoe.Brand,Shoe.Sport,Shoe.Genre,Color") ;
             colorDetails.ShoesListVm = _mapper!.Map<List<ShoeListVm>>(shoes).ToPagedList(currentPage, pageSize);
 
             return View(colorDetails);

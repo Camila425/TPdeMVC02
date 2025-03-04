@@ -1,19 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TPdeEFCore01.Entidades;
 
 namespace TPdeEFCore01.Datos
 {
-    public class ShoesDbContext : DbContext
+    public class ShoesDbContext : IdentityDbContext<IdentityUser>
     {
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Shoe> shoes { get; set; }
-
         public DbSet<Size> Sizes { get; set; }
         public DbSet<ShoeSize> ShoeSizes { get; set; }
-       
+		public DbSet<ShoeColor> ShoeColors { get; set; }
+		public DbSet<ShoeImage> ShoeImages { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
         public ShoesDbContext(DbContextOptions<ShoesDbContext> options): base(options)
         {
 
@@ -21,7 +30,7 @@ namespace TPdeEFCore01.Datos
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+           base.OnModelCreating(modelBuilder);
             var BrandList = new List<Brand>()
             {
                 new Brand
@@ -148,13 +157,43 @@ namespace TPdeEFCore01.Datos
                     .HasForeignKey(ss => ss.SizeId);
 
             });
+            modelBuilder.Entity<Country>(entity =>
+            {
+                entity.HasKey(ss => new {
+                    ss.CountryId
+                });
+            });
+            modelBuilder.Entity<State>(entity =>
+            {
+                entity.HasKey(ss => new {
+                    ss.StateId
+                });
+            });
+            modelBuilder.Entity<City>(entity =>
+            {
+                entity.HasKey(ss => new {
+                    ss.CityId
+                });
+            });
+            modelBuilder.Entity<OrderHeader>(entity =>
+            {
+                entity.HasKey(ss => new {
+                    ss.OrderHeaderId
+                });
+            });
+            modelBuilder.Entity<OrderDetail>(entity =>
+            {
+                entity.HasKey(ss => new {
+                    ss.OrderDetailId
+                });
+            });
+            modelBuilder.Entity<ShoeColor>(entity =>
+            {
+                entity.HasKey(ss => new {
+                    ss.ShoeColorId
+                });
+            });
             modelBuilder.Entity<Shoe>().HasData(shoeList);
-          
-        
-    }
-
-       
-
-
+        }
     }
 }
